@@ -1,5 +1,16 @@
-executable(
-  'taskpp',
-  'main.cpp',
-  install : true
+
+tasker_lib = static_library(
+  'tasker',
+  'projects/project.cpp',
+  'tasks/task.cpp',
+  include_directories : inc,
 )
+
+tasker = executable(
+  'tasker',
+  'main.cpp',
+  install : true,
+  link_with : tasker_lib,
+)
+
+subdir('tests')
