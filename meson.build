@@ -4,13 +4,10 @@ project(
   default_options : ['cpp_std=c++20']
 )
 
-run_command('git', 'fetch', '--tags', '--all', check : true)
-
-r = run_command('bash', '-c', 'git describe || echo "0.0.0"', check : true)
-output = r.stdout().strip()
-
 conf = configuration_data()
-conf.set('version', output)
+version = get_option('version')
+conf.set('version', version)
+message('Version = ' + version)
 
 inc = include_directories('src')
 subdir('src')
