@@ -9,6 +9,7 @@ tasker_lib = static_library(
   'tasker',
   'projects/project.cpp',
   'tasks/task.cpp',
+  'users/user.cpp',
   include_directories : inc,
 )
 

@@ -32,3 +32,12 @@ task_test = executable(
   include_directories : inc,
 )
 test('task test', task_test)
+
+user_test = executable(
+  'user.test',
+  'user.test.cpp',
+  dependencies : test_deps,
+  link_with : [tasker_lib],
+  include_directories : inc,
+)
+test('user test', user_test)
