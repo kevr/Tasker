@@ -6,27 +6,48 @@
 #include <stdexcept>
 using namespace tasker;
 
-project::project(int id)
-    : m_id(id)
+project::project(project_data data)
+    : m_data(std::move(data))
 {
-    if (m_id < 1) {
+    if (m_data.id < 1) {
         throw std::invalid_argument(
             "`project_id` must be a valid integer id >= 1");
     }
 }
 
 project::project(const project &o)
-    : m_id(o.m_id)
+    : m_data(o.m_data)
 {
 }
 
 project &project::operator=(const project &o)
 {
-    m_id = o.m_id;
+    m_data = o.m_data;
+    return *this;
+}
+
+project::project(project &&o)
+    : m_data(std::move(o.m_data))
+{
+}
+
+project &project::operator=(project &&o)
+{
+    m_data = std::move(o.m_data);
     return *this;
 }
 
 const int project::id() const
 {
-    return m_id;
+    return m_data.id;
+}
+
+const std::string &project::name() const
+{
+    return m_data.name;
+}
+
+const std::string &project::full_name() const
+{
+    return m_data.full_name;
 }

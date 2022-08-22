@@ -5,7 +5,7 @@ using namespace tasker;
 class task_test : public ::testing::Test
 {
 protected:
-    project proj { 1 };
+    project proj { { .id = 1 } };
 };
 
 TEST_F(task_test, constructs)
