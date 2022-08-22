@@ -23,3 +23,12 @@ project_test = executable(
   include_directories : inc,
 )
 test('project test', project_test)
+
+task_test = executable(
+  'task.test',
+  'task.test.cpp',
+  dependencies : test_deps,
+  link_with : [tasker_lib],
+  include_directories : inc,
+)
+test('task test', task_test)
