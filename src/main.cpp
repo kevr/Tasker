@@ -4,11 +4,11 @@
  * Copyright (C) 2022 Kevin Morris <kevr@0cost.org>
  * All Rights Reserved.
  **/
-#include "main.hpp"
+#include "config.hpp"
 #include <iostream>
 
 int main(int argc, char *argv[])
 {
-    std::cout << PROGNAME << std::endl;
+    std::cout << PROG << " " << VERSION << std::endl;
     return 0;
 }

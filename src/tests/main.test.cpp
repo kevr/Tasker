@@ -6,7 +6,7 @@
 
 TEST(main, runs)
 {
-    const char *_argv[] = { PROGNAME, nullptr };
+    const char *_argv[] = { PROG, nullptr };
     auto argv = const_cast<char **>(_argv);
 
     auto rc = main_real(1, argv);

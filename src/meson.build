@@ -1,4 +1,10 @@
 
+configure_file(
+  input : 'config.hpp.in',
+  output : 'config.hpp',
+  configuration : conf
+)
+
 tasker_lib = static_library(
   'tasker',
   'projects/project.cpp',
