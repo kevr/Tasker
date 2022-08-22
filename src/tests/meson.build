@@ -14,3 +14,12 @@ main_test = executable(
   include_directories : inc,
 )
 test('main test', main_test)
+
+project_test = executable(
+  'project.test',
+  'project.test.cpp',
+  dependencies : test_deps,
+  link_with : [tasker_lib],
+  include_directories : inc,
+)
+test('project test', project_test)
