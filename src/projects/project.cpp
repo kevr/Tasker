@@ -15,28 +15,6 @@ project::project(project_data data)
     }
 }
 
-project::project(const project &o)
-    : m_data(o.m_data)
-{
-}
-
-project &project::operator=(const project &o)
-{
-    m_data = o.m_data;
-    return *this;
-}
-
-project::project(project &&o)
-    : m_data(std::move(o.m_data))
-{
-}
-
-project &project::operator=(project &&o)
-{
-    m_data = std::move(o.m_data);
-    return *this;
-}
-
 const int project::id() const
 {
     return m_data.id;

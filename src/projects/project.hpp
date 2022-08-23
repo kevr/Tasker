@@ -24,12 +24,12 @@ public:
     project(project_data data);
 
     // Constructors/assignment
-    project(const project &o);
-    project &operator=(const project &o);
+    project(const project &o) = default;
+    project &operator=(const project &o) = default;
 
     // Move constructors/assignment
-    project(project &&o);
-    project &operator=(project &&o);
+    project(project &&o) = default;
+    project &operator=(project &&o) = default;
 
     //! Project ID
     const int id() const;

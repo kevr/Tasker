@@ -20,11 +20,11 @@ public:
     user() = default;
     user(user_data data);
 
-    user(const user &o);
-    user &operator=(const user &o);
+    user(const user &o) = default;
+    user &operator=(const user &o) = default;
 
-    user(user &&o);
-    user &operator=(user &&o);
+    user(user &&o) = default;
+    user &operator=(user &&o) = default;
 
     const int id() const;
     const std::string &login() const;

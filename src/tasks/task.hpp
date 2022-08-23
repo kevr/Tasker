@@ -29,12 +29,12 @@ public:
     task(project &project_id, task_data data);
 
     // Copy constructor/assignment
-    task(const task &o);
-    task &operator=(const task &o);
+    task(const task &o) = default;
+    task &operator=(const task &o) = default;
 
     // Move constructor/assignment
-    task(task &&o);
-    task &operator=(task &&o);
+    task(task &&o) = default;
+    task &operator=(task &&o) = default;
 
     /*! Project ID */
     const project &parent() const;

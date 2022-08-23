@@ -17,32 +17,6 @@ task::task(tasker::project &p, task_data data)
     }
 }
 
-task::task(const task &o)
-    : m_project(o.m_project)
-    , m_data(o.m_data)
-{
-}
-
-task &task::operator=(const task &o)
-{
-    m_project = o.m_project;
-    m_data = o.m_data;
-    return *this;
-}
-
-task::task(task &&o)
-    : m_project(o.m_project)
-    , m_data(std::move(o.m_data))
-{
-}
-
-task &task::operator=(task &&o)
-{
-    m_project = o.m_project;
-    m_data = std::move(o.m_data);
-    return *this;
-}
-
 const project &task::parent() const
 {
     return *m_project;
