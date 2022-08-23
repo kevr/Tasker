@@ -4,6 +4,8 @@ project(
   default_options : ['cpp_std=c++20']
 )
 
+ncurses_dep = dependency('ncurses', required : true)
+
 conf = configuration_data()
 version = get_option('version')
 conf.set('version', version)

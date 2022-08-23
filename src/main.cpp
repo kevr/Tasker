@@ -5,10 +5,14 @@
  * All Rights Reserved.
  **/
 #include "config.hpp"
+#include "ncurses.hpp"
 #include <iostream>
 
 int main(int argc, char *argv[])
 {
     std::cout << PROG << " " << VERSION << std::endl;
-    return 0;
+
+    auto ncurses = tasker::ext::ncurses();
+    ncurses.initscr();
+    return ncurses.endwin();
 }

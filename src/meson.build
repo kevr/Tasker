@@ -13,11 +13,30 @@ tasker_lib = static_library(
   include_directories : inc,
 )
 
+ncurses_lib = static_library(
+  'ncurses-static',
+  'ext/ncurses.cpp',
+  dependencies : ncurses_dep,
+  include_directories : inc
+)
+
 tasker = executable(
   'tasker',
   'main.cpp',
   install : true,
-  link_with : tasker_lib,
+  link_with : [tasker_lib, ncurses_lib],
+)
+
+stub_lib = static_library(
+  'stubs-static',
+  'stubs/ncurses.cpp',
+  include_directories : inc
+)
+
+stub_dep = declare_dependency(
+  include_directories : inc,
+  link_with : [stub_lib],
+  compile_args : '-DTESTING',
 )
 
 subdir('tests')

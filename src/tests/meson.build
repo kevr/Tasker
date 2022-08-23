@@ -3,7 +3,7 @@ gtest_dep = gtest_proj.get_variable('gtest_dep')
 gmock_dep = gtest_proj.get_variable('gmock_dep')
 gtest_main_dep = gtest_proj.get_variable('gtest_main_dep')
 
-test_deps = [gtest_dep, gtest_main_dep]
+test_deps = [gtest_dep, gtest_main_dep, stub_dep]
 test_mock_deps = test_deps + [gmock_dep]
 
 main_test = executable(
