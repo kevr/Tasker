@@ -29,6 +29,11 @@ int ext::ncurses::raw() noexcept
     return OK;
 }
 
+int ext::ncurses::noecho() noexcept
+{
+    return OK;
+}
+
 int ext::ncurses::endwin() noexcept
 {
     return OK;

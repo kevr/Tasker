@@ -66,6 +66,11 @@ public:
             return *this;
         }
 
+        if (auto rc = ncurses.noecho()) {
+            m_return_code = error(4, "noecho() failed: ", rc);
+            return *this;
+        }
+
         return *this;
     }
 

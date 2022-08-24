@@ -30,6 +30,7 @@ public:
     virtual WINDOW *initscr() noexcept;
     virtual int keypad(WINDOW *, bool) noexcept;
     virtual int raw() noexcept;
+    virtual int noecho() noexcept;
     virtual int endwin() noexcept;
 
 public:

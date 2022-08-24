@@ -28,6 +28,11 @@ int ext::ncurses::raw() noexcept
     return ::raw();
 }
 
+int ext::ncurses::noecho() noexcept
+{
+    return ::noecho();
+}
+
 int ext::ncurses::endwin() noexcept
 {
     return ::endwin();
