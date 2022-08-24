@@ -11,9 +11,16 @@ namespace tasker::ext
 //! Real ncurses library function call utility
 class ncurses
 {
+private:
+    WINDOW *m_root = nullptr;
+
 public:
     WINDOW *initscr() noexcept;
+    int keypad(WINDOW *, bool) noexcept;
     int endwin() noexcept;
+
+public:
+    WINDOW *root() noexcept;
 };
 
 }; // namespace tasker::ext

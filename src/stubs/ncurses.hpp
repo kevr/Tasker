@@ -1,6 +1,8 @@
 #ifndef SRC_STUBS_NCURSES_HPP
 #define SRC_STUBS_NCURSES_HPP
 
+#include <map>
+
 // We use a stub WINDOW in our stub definition, since
 // we won't get the real symbols elsewhere.
 class WINDOW
@@ -18,18 +20,21 @@ class ncurses
 {
 private:
     // Used to track a stub root window pointer of valid address.
-    WINDOW *m_root = nullptr;
+    static WINDOW *m_root;
+    static std::map<WINDOW *, bool> m_keypad;
 
 public:
     virtual ~ncurses() = default;
 
     // Stub functions.
     virtual WINDOW *initscr() noexcept;
+    virtual int keypad(WINDOW *, bool) noexcept;
     virtual int endwin() noexcept;
 
 public:
     // Test utilities.
     WINDOW *root() noexcept;
+    bool keypad(WINDOW *) noexcept;
 };
 
 }; // namespace tasker::ext

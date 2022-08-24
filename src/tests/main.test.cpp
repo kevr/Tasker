@@ -2,6 +2,7 @@
 #include "main.cpp"
 #undef main
 
+#include "../ncurses.hpp"
 #include <gtest/gtest.h>
 
 TEST(main, runs)
@@ -11,4 +12,8 @@ TEST(main, runs)
 
     auto rc = main_real(1, argv);
     ASSERT_EQ(rc, 0);
+
+    // main() sets keypad(root_win, true); let's assert that it did.
+    auto ncurses = tasker::ext::ncurses();
+    ASSERT_TRUE(ncurses.keypad(ncurses.root()));
 }

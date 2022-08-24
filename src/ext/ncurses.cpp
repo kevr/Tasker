@@ -15,11 +15,21 @@ using namespace tasker;
 // LCOV_EXCL_START
 WINDOW *ext::ncurses::initscr() noexcept
 {
-    return ::initscr();
+    return (m_root = ::initscr());
+}
+
+int ext::ncurses::keypad(WINDOW *win, bool bf) noexcept
+{
+    return ::keypad(win, bf);
 }
 
 int ext::ncurses::endwin() noexcept
 {
     return ::endwin();
+}
+
+WINDOW *ext::ncurses::root() noexcept
+{
+    return m_root;
 }
 // LCOV_EXCL_STOP

@@ -14,5 +14,6 @@ int main(int argc, char *argv[])
 
     auto ncurses = tasker::ext::ncurses();
     ncurses.initscr();
+    ncurses.keypad(ncurses.root(), true);
     return ncurses.endwin();
 }
