@@ -19,6 +19,7 @@ public:
     int keypad(WINDOW *, bool) noexcept;
     int raw() noexcept;
     int noecho() noexcept;
+    int refresh() noexcept;
     int endwin() noexcept;
 
 public:

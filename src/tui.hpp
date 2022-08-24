@@ -74,9 +74,19 @@ public:
         return *this;
     }
 
+    int refresh() noexcept
+    {
+        return ncurses.refresh();
+    }
+
     int return_code() const noexcept
     {
         return m_return_code;
+    }
+
+    operator bool() const noexcept
+    {
+        return m_return_code == 0;
     }
 
     int end() noexcept

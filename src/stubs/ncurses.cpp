@@ -34,6 +34,11 @@ int ext::ncurses::noecho() noexcept
     return OK;
 }
 
+int ext::ncurses::refresh() noexcept
+{
+    return OK;
+}
+
 int ext::ncurses::endwin() noexcept
 {
     return OK;

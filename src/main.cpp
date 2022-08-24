@@ -8,7 +8,9 @@
 #include "ncurses.hpp"
 #include "tui.hpp"
 #include "utility.hpp"
+#include <chrono>
 #include <iostream>
+#include <thread>
 using namespace tasker;
 
 int tasker_main(ext::ncurses &ncurses, int argc, char *argv[])
@@ -17,7 +19,10 @@ int tasker_main(ext::ncurses &ncurses, int argc, char *argv[])
 
     // Construct and initialize the TUI
     tui::tui term(ncurses);
-    term.init();
+    if (!term.init())
+        return term.end();
+
+    term.refresh();
 
     // End the TUI
     return term.end();
