@@ -23,6 +23,11 @@ int ext::ncurses::keypad(WINDOW *win, bool bf) noexcept
     return ::keypad(win, bf);
 }
 
+int ext::ncurses::raw() noexcept
+{
+    return ::raw();
+}
+
 int ext::ncurses::endwin() noexcept
 {
     return ::endwin();

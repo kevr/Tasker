@@ -57,7 +57,12 @@ public:
         }
 
         if (auto rc = ncurses.keypad(ncurses.root(), true)) {
-            m_return_code = error(2, "keypad failed: ", rc);
+            m_return_code = error(2, "keypad(...) failed: ", rc);
+            return *this;
+        }
+
+        if (auto rc = ncurses.raw()) {
+            m_return_code = error(3, "raw() failed: ", rc);
             return *this;
         }
 

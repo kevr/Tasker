@@ -12,6 +12,7 @@ class mock_ncurses : public ncurses
 public:
     MOCK_METHOD(WINDOW *, initscr, (), (noexcept, override));
     MOCK_METHOD(int, keypad, (WINDOW *, bool), (noexcept, override));
+    MOCK_METHOD(int, raw, (), (noexcept, override));
     MOCK_METHOD(int, endwin, (), (noexcept, override));
 };
 

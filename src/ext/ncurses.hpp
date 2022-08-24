@@ -17,6 +17,7 @@ private:
 public:
     WINDOW *initscr() noexcept;
     int keypad(WINDOW *, bool) noexcept;
+    int raw() noexcept;
     int endwin() noexcept;
 
 public:
