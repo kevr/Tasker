@@ -12,6 +12,7 @@ TEST(main, initscr_fails)
 {
     tasker::ext::mock_ncurses ncurses;
     EXPECT_CALL(ncurses, initscr()).WillOnce(Return(nullptr));
+    EXPECT_CALL(ncurses, endwin()).WillOnce(Return(0));
 
     const char *_argv[] = { PROG, nullptr };
     auto argv = const_cast<char **>(_argv);
@@ -27,6 +28,7 @@ TEST(main, keypad_fails)
     WINDOW win;
     EXPECT_CALL(ncurses, initscr()).WillOnce(Return(&win));
     EXPECT_CALL(ncurses, keypad(_, _)).WillOnce(Return(ERR));
+    EXPECT_CALL(ncurses, endwin()).WillOnce(Return(0));
 
     const char *_argv[] = { PROG, nullptr };
     auto argv = const_cast<char **>(_argv);

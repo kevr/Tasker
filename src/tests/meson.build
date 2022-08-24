@@ -50,3 +50,12 @@ ncurses_test = executable(
   include_directories : inc,
 )
 test('ncurses test', ncurses_test)
+
+tui_test = executable(
+  'tui.test',
+  'tui.test.cpp',
+  dependencies : test_deps,
+  link_with : [tasker_lib],
+  include_directories : inc,
+)
+test('tui test', tui_test)

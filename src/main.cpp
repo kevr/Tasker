@@ -6,21 +6,21 @@
  **/
 #include "config.hpp"
 #include "ncurses.hpp"
+#include "tui.hpp"
 #include "utility.hpp"
 #include <iostream>
+using namespace tasker;
 
-int tasker_main(tasker::ext::ncurses &ncurses, int argc, char *argv[])
+int tasker_main(ext::ncurses &ncurses, int argc, char *argv[])
 {
     std::cout << PROG << " " << VERSION << std::endl;
-    if (!ncurses.initscr()) {
-        return error(1, "ncurses.initscr() failed");
-    }
 
-    if (auto rc = ncurses.keypad(ncurses.root(), true)) {
-        return error(2, "ncurses.keypad failed: ", rc);
-    }
+    // Construct and initialize the TUI
+    tui::tui term(ncurses);
+    term.init();
 
-    return ncurses.endwin();
+    // End the TUI
+    return term.end();
 }
 
 int main(int argc, char *argv[])

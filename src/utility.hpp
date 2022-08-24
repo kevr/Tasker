@@ -4,14 +4,14 @@
 #include <iostream>
 
 template <typename T>
-int _error(int rc, const T &arg)
+int _error(int rc, T &&arg)
 {
     std::cerr << arg << std::endl;
     return rc;
 }
 
 template <typename T, typename... Args>
-int _error(int rc, const T &arg, Args &&...args)
+int _error(int rc, T &&arg, Args &&...args)
 {
     std::cerr << arg;
     return _error(rc, std::forward<Args>(args)...);
@@ -22,6 +22,13 @@ int error(int rc, Args &&...args)
 {
     std::cerr << "error: ";
     return _error(rc, std::forward<Args>(args)...);
+}
+
+template <typename T>
+int error(int rc, T &&arg)
+{
+    std::cerr << "error: ";
+    return _error(rc, std::move(arg));
 }
 
 #endif /* SRC_UTILITY_HPP */
