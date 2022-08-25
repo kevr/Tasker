@@ -26,6 +26,8 @@ public:
     {
         EXPECT_CALL(ncurses, initscr()).WillOnce(Return(&mock_win));
         EXPECT_CALL(ncurses, keypad(_, _)).WillOnce(Return(OK));
+        EXPECT_CALL(ncurses, raw()).WillOnce(Return(OK));
+        EXPECT_CALL(ncurses, noecho()).WillOnce(Return(OK));
         EXPECT_CALL(ncurses, endwin()).WillOnce(Return(OK));
     }
 };

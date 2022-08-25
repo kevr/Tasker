@@ -59,3 +59,12 @@ tui_test = executable(
   include_directories : inc,
 )
 test('tui test', tui_test)
+
+window_test = executable(
+  'window.test',
+  'window.test.cpp',
+  dependencies : test_deps,
+  link_with : [tasker_lib],
+  include_directories : inc,
+)
+test('window test', window_test)

@@ -1,6 +1,7 @@
 #ifndef SRC_TUI_HPP
 #define SRC_TUI_HPP
 
+#include "tui/window.hpp"
 #include "utility.hpp"
 #include <stdexcept>
 
@@ -22,6 +23,8 @@ private:
     // curses library interface, bound on construction
     CI &ncurses;
 
+    std::shared_ptr<root_window<CI>> root;
+
     // `tui` state
     int m_return_code = 0;
     bool m_created = false;
@@ -30,6 +33,7 @@ private:
 public:
     tui(CI &ncurses) noexcept
         : ncurses(ncurses)
+        , root(std::make_shared<root_window<CI>>(ncurses))
     {
     }
 
@@ -51,12 +55,12 @@ public:
         m_ended = false;
         m_created = true;
 
-        if (!ncurses.initscr()) {
-            m_return_code = error(1, "initscr() failed");
+        if (auto rc = root->init()) {
+            m_return_code = rc;
             return *this;
         }
 
-        if (auto rc = ncurses.keypad(ncurses.root(), true)) {
+        if (auto rc = ncurses.keypad(root->handle(), true)) {
             m_return_code = error(2, "keypad(...) failed: ", rc);
             return *this;
         }
@@ -76,7 +80,7 @@ public:
 
     int refresh() noexcept
     {
-        return ncurses.refresh();
+        return root->refresh();
     }
 
     int return_code() const noexcept
@@ -97,10 +101,10 @@ public:
         m_ended = true;
         m_created = false;
 
-        // Just run endwin() in all cases; in the case where we error
-        // out after running initscr(), this will be able to undo what
+        // Just destruct the root window in all cases; in the case where we
+        // error out after running initscr(), this will be able to undo what
         // initscr() did if it can.
-        auto rc = ncurses.endwin();
+        auto rc = root->end();
 
         // Only update m_return_code if it's not already errored out.
         if (m_return_code == 0)

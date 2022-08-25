@@ -12,13 +12,12 @@ TEST(main, initscr_fails)
 {
     tasker::ext::mock_ncurses ncurses;
     EXPECT_CALL(ncurses, initscr()).WillOnce(Return(nullptr));
-    EXPECT_CALL(ncurses, endwin()).WillOnce(Return(0));
 
     const char *_argv[] = { PROG, nullptr };
     auto argv = const_cast<char **>(_argv);
 
     auto rc = tasker_main(ncurses, 1, argv);
-    ASSERT_EQ(rc, 1);
+    ASSERT_EQ(rc, ERROR_INITSCR);
 }
 
 TEST(main, keypad_fails)
@@ -34,7 +33,7 @@ TEST(main, keypad_fails)
     auto argv = const_cast<char **>(_argv);
 
     auto rc = tasker_main(ncurses, 1, argv);
-    ASSERT_EQ(rc, 2);
+    ASSERT_EQ(rc, ERROR_KEYPAD);
 }
 
 TEST(main, raw_fails)
@@ -51,7 +50,7 @@ TEST(main, raw_fails)
     auto argv = const_cast<char **>(_argv);
 
     auto rc = tasker_main(ncurses, 1, argv);
-    ASSERT_EQ(rc, 3);
+    ASSERT_EQ(rc, ERROR_RAW);
 }
 
 TEST(main, noecho_fails)
@@ -69,7 +68,7 @@ TEST(main, noecho_fails)
     auto argv = const_cast<char **>(_argv);
 
     auto rc = tasker_main(ncurses, 1, argv);
-    ASSERT_EQ(rc, 4);
+    ASSERT_EQ(rc, ERROR_ECHO);
 }
 
 TEST(main, runs)
@@ -78,7 +77,7 @@ TEST(main, runs)
     auto argv = const_cast<char **>(_argv);
 
     auto rc = main_real(1, argv);
-    ASSERT_EQ(rc, 0);
+    ASSERT_EQ(rc, SUCCESS);
 
     // main() sets keypad(root_win, true); let's assert that it did.
     auto ncurses = tasker::ext::ncurses();
