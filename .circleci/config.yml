@@ -5,11 +5,15 @@ jobs:
       - image: ubuntu:latest
     steps:
       - run:
+          name: Prepare environment
+          command: |
+            ln -s /usr/share/zoneinfo/UTC /etc/localtime
+      - run:
           name: Install dependencies
           command: |
             apt-get -y update
             apt-get -y install git
-            apt-get -y install gcc meson pkg-config
+            apt-get -y install gcc meson pkg-config gcovr
             apt-get -y install libncurses-dev
       - checkout
       - run:
@@ -25,6 +29,13 @@ jobs:
           command: |
             cd build
             ninja test
+      - run:
+          name: Generate coverage reports
+          command: |
+            cd build
+            ninja coverage-text
+      - store_artifacts:
+          path: build/meson-logs/coverage.txt
 
 workflows:
   main:
