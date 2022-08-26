@@ -1,6 +1,8 @@
 tasker
 ======
 
+[![Test Coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/kevr/98692fb94e55e0667afb58f20b67f3f2/raw/tasker__heads_master.json)](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/kevr/98692fb94e55e0667afb58f20b67f3f2/raw/tasker__heads_master.json)
+
 A task management program which interfaces with various services
 and linux task formats.
 
