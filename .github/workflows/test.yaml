@@ -66,5 +66,5 @@ jobs:
           filename: tasker__${{ env.BRANCH }}.json
           label: Test Coverage
           message: ${{ env.COVERAGE }}
-          color: green
+          color: '#32a852'
           namedLogo: jest
