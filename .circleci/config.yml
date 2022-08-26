@@ -1,6 +1,6 @@
 version: 2.1
 jobs:
-  build:
+  build-and-test:
     docker:
       - image: ubuntu:latest
     steps:
@@ -25,3 +25,8 @@ jobs:
           command: |
             cd build
             ninja test
+
+workflows:
+  main:
+    jobs:
+      - build-and-test
