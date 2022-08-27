@@ -5,6 +5,8 @@
 #include "ncurses.hpp"
 #include "object.hpp"
 #include "utility.hpp"
+#include <algorithm>
+#include <list>
 #include <memory>
 #include <tuple>
 
@@ -18,9 +20,23 @@ protected:
     CI *ncurses = nullptr;
     WINDOW *m_win = nullptr;
 
+    std::list<WINDOW *> m_children;
+
     // Dimensions
     int m_x { 0 };
     int m_y { 0 };
+
+public:
+    void add_child(WINDOW *win)
+    {
+        m_children.emplace_back(win);
+    }
+
+    void remove_child(WINDOW *win)
+    {
+        auto it = std::find(m_children.begin(), m_children.end(), win);
+        m_children.erase(it);
+    }
 
 public:
     basic_window() = default;
@@ -60,6 +76,20 @@ public:
     WINDOW *handle() const noexcept
     {
         return m_win;
+    }
+
+    int refresh_all() noexcept
+    {
+        if (auto rc = refresh())
+            return rc;
+
+        for (auto &win : this->m_children) {
+            if (auto rc = this->ncurses->wrefresh(win)) {
+                return rc;
+            }
+        }
+
+        return OK;
     }
 };
 
@@ -169,6 +199,7 @@ public:
             return error(ERROR_SUBWIN, "subwin() returned a nullptr");
         }
 
+        m_parent->add_child(this->m_win);
         return OK;
     }
 
@@ -185,6 +216,7 @@ public:
     {
         if (this->m_win) {
             auto rc = this->ncurses->delwin(this->m_win);
+            this->m_parent->remove_child(this->m_win);
             this->m_win = nullptr;
             return rc;
         }
