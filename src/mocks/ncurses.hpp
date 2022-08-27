@@ -15,10 +15,10 @@ public:
     MOCK_METHOD(int, raw, (), (noexcept, override));
     MOCK_METHOD(int, noecho, (), (noexcept, override));
     MOCK_METHOD(int, endwin, (), (noexcept, override));
-    MOCK_METHOD(
-        void, get_max_yx, (WINDOW *, int &, int &), (noexcept, override));
+    MOCK_METHOD(void, get_max_yx, (WINDOW *, int &, int &),
+                (noexcept, override));
     MOCK_METHOD(WINDOW *, subwin, (WINDOW *, int, int, int, int),
-        (noexcept, override));
+                (noexcept, override));
 };
 
 }; // namespace tasker::ext

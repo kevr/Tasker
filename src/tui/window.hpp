@@ -99,8 +99,8 @@ public:
     int refresh() noexcept final override
     {
         if (!*this) {
-            return error(
-                ERR, "root_window::refresh() called on a null handle");
+            return error(ERR,
+                         "root_window::refresh() called on a null handle");
         }
 
         return this->ncurses->refresh();
