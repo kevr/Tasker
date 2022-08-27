@@ -15,6 +15,7 @@ using namespace tasker;
 
 int tasker_main(ext::ncurses &ncurses, int argc, char *argv[])
 {
+    // Print out the program name and version.
     std::cout << PROG << " " << VERSION << std::endl;
 
     // Construct and initialize the TUI
@@ -22,6 +23,7 @@ int tasker_main(ext::ncurses &ncurses, int argc, char *argv[])
     if (!term.init())
         return term.end();
 
+    // Refresh the TUI
     term.refresh();
 
     // End the TUI
