@@ -34,6 +34,7 @@ jobs:
           cd build
           ninja coverage-text
           ninja coverage-xml
+          cat meson-logs/coverage.txt
 
       - name: Code Coverage Report
         uses: irongut/CodeCoverageSummary@v1.3.0
