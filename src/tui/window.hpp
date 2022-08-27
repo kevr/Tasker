@@ -13,30 +13,33 @@
 namespace tasker::tui
 {
 
+/**
+ * @brief A window base meant to be derived into a real window object.
+ *
+ * basic_window<CI> uses the `object` interface, along with several more
+ * pieces of functionality related to ncurses windows.
+ *
+ * See implementations `root_window<CI>` and `window<CI>` for core
+ * derivatives of `basic_window<CI>` which utilize ncurses.
+ *
+ * Construction of this class should only take place via std::make_shared,
+ * as it utilizes the std::enable_shared_from_this interface.
+ **/
 template <typename CI>
-class basic_window : public object
+class basic_window : public object,
+                     public std::enable_shared_from_this<basic_window<CI>>
 {
 protected:
     CI *ncurses = nullptr;
     WINDOW *m_win = nullptr;
 
-    std::list<WINDOW *> m_children;
+    using basic_window_ptr = std::shared_ptr<basic_window<CI>>;
+
+    std::list<basic_window_ptr> m_children;
 
     // Dimensions
     int m_x { 0 };
     int m_y { 0 };
-
-public:
-    void add_child(WINDOW *win)
-    {
-        m_children.emplace_back(win);
-    }
-
-    void remove_child(WINDOW *win)
-    {
-        auto it = std::find(m_children.begin(), m_children.end(), win);
-        m_children.erase(it);
-    }
 
 public:
     basic_window() = default;
@@ -84,12 +87,23 @@ public:
             return rc;
 
         for (auto &win : this->m_children) {
-            if (auto rc = this->ncurses->wrefresh(win)) {
+            if (auto rc = win->refresh()) {
                 return rc;
             }
         }
 
         return OK;
+    }
+
+    void add_child(basic_window_ptr window)
+    {
+        m_children.emplace_back(std::move(window));
+    }
+
+    void remove_child(basic_window_ptr window)
+    {
+        auto it = std::find(m_children.begin(), m_children.end(), window);
+        m_children.erase(it);
     }
 };
 
@@ -199,7 +213,7 @@ public:
             return error(ERROR_SUBWIN, "subwin() returned a nullptr");
         }
 
-        m_parent->add_child(this->m_win);
+        m_parent->add_child(this->shared_from_this());
         return OK;
     }
 
@@ -216,7 +230,7 @@ public:
     {
         if (this->m_win) {
             auto rc = this->ncurses->delwin(this->m_win);
-            this->m_parent->remove_child(this->m_win);
+            this->m_parent->remove_child(this->shared_from_this());
             this->m_win = nullptr;
             return rc;
         }
