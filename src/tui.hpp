@@ -4,6 +4,7 @@
 #include "tui/window.hpp"
 #include "utility.hpp"
 #include <stdexcept>
+#include <tuple>
 
 namespace tasker::tui
 {
@@ -86,6 +87,16 @@ public:
     int return_code() const noexcept
     {
         return m_return_code;
+    }
+
+    std::shared_ptr<root_window<CI>> window() const
+    {
+        return root;
+    }
+
+    std::tuple<int, int> dimensions() const
+    {
+        return root->dimensions();
     }
 
     operator bool() const noexcept

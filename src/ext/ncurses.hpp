@@ -18,7 +18,13 @@ public:
     int raw() noexcept;
     int noecho() noexcept;
     int refresh() noexcept;
+    int wrefresh(WINDOW *) noexcept;
     int endwin() noexcept;
+
+    // Child window functions
+    WINDOW *subwin(WINDOW *, int, int, int, int) noexcept;
+    void get_max_yx(WINDOW *, int &, int &) noexcept;
+    int delwin(WINDOW *) noexcept;
 
 public:
     WINDOW *root() noexcept;

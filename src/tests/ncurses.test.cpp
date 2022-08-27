@@ -15,3 +15,17 @@ TEST(ncurses, endwin_mock)
     EXPECT_CALL(ncurses, endwin()).WillOnce(Return(OK));
     ASSERT_EQ(ncurses.endwin(), OK);
 }
+
+TEST(ncurses, delwin_fails)
+{
+    tasker::ext::ncurses ncurses;
+    ASSERT_EQ(ncurses.delwin(nullptr), ERR);
+}
+
+TEST(ncurses, keypad)
+{
+    tasker::ext::ncurses ncurses;
+    WINDOW win;
+    ncurses.keypad(&win, true);
+    ASSERT_TRUE(ncurses.keypad(&win));
+}

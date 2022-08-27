@@ -9,7 +9,6 @@
  * All Rights Reserved.
  **/
 #include "ncurses.hpp"
-#include <ncurses.h>
 using namespace tasker;
 
 // LCOV_EXCL_START
@@ -38,9 +37,30 @@ int ext::ncurses::refresh() noexcept
     return ::refresh();
 }
 
+int ext::ncurses::wrefresh(WINDOW *win) noexcept
+{
+    return ::wrefresh(win);
+}
+
 int ext::ncurses::endwin() noexcept
 {
     return ::endwin();
+}
+
+WINDOW *ext::ncurses::subwin(WINDOW *parent, int nlines, int ncols,
+                             int begin_y, int begin_x) noexcept
+{
+    return ::subwin(parent, nlines, ncols, begin_y, begin_x);
+}
+
+void ext::ncurses::get_max_yx(WINDOW *win, int &y, int &x) noexcept
+{
+    getmaxyx(win, y, x);
+}
+
+int ext::ncurses::delwin(WINDOW *win) noexcept
+{
+    return ::delwin(win);
 }
 
 WINDOW *ext::ncurses::root() noexcept
