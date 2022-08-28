@@ -59,14 +59,14 @@ TEST(config, set_ref)
 
 TEST_F(config_test, usage)
 {
-    std::string expected = PROG + " [-hv]";
+    std::string expected = PROG + " [-hvc]";
     ASSERT_EQ(conf.usage(), expected);
 }
 
 TEST_F(config_test, config_usage)
 {
     conf.option("test", "test help");
-    std::string expected = PROG + " [-hv] [--test]";
+    std::string expected = PROG + " [-hvc] [--test]";
     ASSERT_EQ(conf.usage(), expected);
 }
 
@@ -75,12 +75,13 @@ TEST_F(config_test, help)
     auto output = capture_ostream(conf);
 
     auto lines = split(output, '\n');
-    ASSERT_EQ(lines.size(), 5);
+    ASSERT_EQ(lines.size(), 6);
     ASSERT_EQ(lines[0], "");
     ASSERT_EQ(lines[1], "Program options:");
     ASSERT_NE(lines[2].find("-h [ --help ]"), std::string::npos);
     ASSERT_NE(lines[3].find("-v [ --version ]"), std::string::npos);
-    ASSERT_EQ(lines[4], "");
+    ASSERT_NE(lines[4].find("-c [ --config ] arg"), std::string::npos);
+    ASSERT_EQ(lines[5], "");
 }
 
 TEST_F(config_test, config_help)
@@ -89,15 +90,16 @@ TEST_F(config_test, config_help)
     auto output = capture_ostream(conf);
 
     auto lines = split(output, '\n');
-    ASSERT_EQ(lines.size(), 8);
+    ASSERT_EQ(lines.size(), 9);
     ASSERT_EQ(lines[0], "");
     ASSERT_EQ(lines[1], "Program options:");
     ASSERT_NE(lines[2].find("-h [ --help ]"), std::string::npos);
     ASSERT_NE(lines[3].find("-v [ --version ]"), std::string::npos);
-    ASSERT_EQ(lines[4], "");
-    ASSERT_EQ(lines[5], "Config options:");
-    ASSERT_NE(lines[6].find("--test"), std::string::npos);
-    ASSERT_EQ(lines[7], "");
+    ASSERT_NE(lines[4].find("-c [ --config ] arg"), std::string::npos);
+    ASSERT_EQ(lines[5], "");
+    ASSERT_EQ(lines[6], "Config options:");
+    ASSERT_NE(lines[7].find("--test"), std::string::npos);
+    ASSERT_EQ(lines[8], "");
 }
 
 TEST_F(config_test, getattr)

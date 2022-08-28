@@ -12,6 +12,8 @@ cfg::config::config() noexcept
 {
     m_desc.add_options()("help,h", "produce help message");
     m_desc.add_options()("version,v", "print version string");
+    m_desc.add_options()(
+        "config,c", po::value<std::string>(), "custom config file path");
 }
 
 cfg::config &cfg::config::option(const std::string &key,
@@ -23,7 +25,7 @@ cfg::config &cfg::config::option(const std::string &key,
 
 std::string cfg::config::usage() const
 {
-    std::string usage("[-hv] ");
+    std::string usage("[-hvc] ");
     for (auto &opt : m_config->options()) {
         usage.append("[");
         usage.append(opt->format_name());

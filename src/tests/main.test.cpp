@@ -1,3 +1,4 @@
+#include "utility.hpp"
 #include <gtest/internal/gtest-port.h>
 #define main main_real
 #include "main.cpp"
@@ -12,10 +13,36 @@ using ::testing::Return;
 
 class main_test : public ::testing::Test
 {
+protected:
+    std::string tmpdir;
+
+protected:
+    void write_config(const std::map<std::string, std::string> &options)
+    {
+        std::filesystem::path p(tmpdir);
+        p /= "config";
+        {
+            std::ofstream ofs(p.c_str(), std::ios::out);
+            for (auto &kv : options) {
+                ofs << kv.first << " = " << kv.second << std::endl;
+            }
+            ofs << std::endl;
+            ofs.close();
+        }
+    }
+
 public:
     void SetUp() override
     {
         cfg::config::new_ref();
+        tmpdir = test::make_temp_directory();
+    }
+
+    void TearDown() override
+    {
+        if (tmpdir.size()) {
+            std::filesystem::remove_all(tmpdir);
+        }
     }
 };
 
@@ -143,7 +170,8 @@ TEST_F(main_test, help)
     ASSERT_EQ(lines[2], "Program options:");
     ASSERT_NE(lines[3].find("-h [ --help ]"), std::string::npos);
     ASSERT_NE(lines[4].find("-v [ --version ]"), std::string::npos);
-    ASSERT_EQ(lines[5], "");
+    ASSERT_NE(lines[5].find("-c [ --config ] arg"), std::string::npos);
+    ASSERT_EQ(lines[6], "");
 }
 
 TEST_F(main_test, version)
@@ -158,4 +186,37 @@ TEST_F(main_test, version)
 
     auto output = strip(testing::internal::GetCapturedStdout(), '\n');
     ASSERT_EQ(output, VERSION);
+}
+
+TEST_F(main_test, custom_config)
+{
+    std::map<std::string, std::string> options;
+    write_config(options);
+
+    std::filesystem::path path(tmpdir);
+    path /= "config";
+
+    const char *_argv[] = { PROG.c_str(), "--config", path.c_str(), nullptr };
+    auto argv = const_cast<char **>(_argv);
+    int argc = 3;
+
+    auto rc = main_real(argc, argv);
+    ASSERT_EQ(rc, SUCCESS);
+}
+
+TEST_F(main_test, custom_config_unknown_option)
+{
+    std::map<std::string, std::string> options;
+    options["fake-option"] = "blahblah";
+    write_config(options);
+
+    std::filesystem::path path(tmpdir);
+    path /= "config";
+
+    const char *_argv[] = { PROG.c_str(), "--config", path.c_str(), nullptr };
+    auto argv = const_cast<char **>(_argv);
+    int argc = 3;
+
+    auto rc = main_real(argc, argv);
+    ASSERT_EQ(rc, ERR);
 }

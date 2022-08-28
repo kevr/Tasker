@@ -6,6 +6,7 @@
  **/
 #include "config.hpp"
 #include "config/config.hpp"
+#include "env.hpp"
 #include "ncurses.hpp"
 #include "tui.hpp"
 #include "utility.hpp"
@@ -29,6 +30,24 @@ int tasker_main(ext::ncurses &ncurses, int argc, char *argv[])
     if (conf.exists("version")) {
         std::cout << VERSION << std::endl;
         return SUCCESS;
+    }
+
+    std::optional<std::filesystem::path> path;
+
+    if (conf.exists("config")) {
+        path = conf["config"];
+    } else {
+        path = env::search_config_path();
+    }
+
+    if (path.has_value()) {
+        try {
+            conf.parse_config(path.value());
+        } catch (boost::program_options::unknown_option &e) {
+            std::cerr << "error: " << e.what() << " found in "
+                      << path.value().string() << std::endl;
+            return ERR;
+        }
     }
 
     // Construct and initialize the TUI
