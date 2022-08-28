@@ -203,7 +203,6 @@ TEST_F(main_test, custom_config)
 
 TEST_F(main_test, custom_config_unknown_option)
 {
-    std::cout << "HOME=" << env::variable("HOME") << std::endl;
     std::map<std::string, std::string> options;
     options["fake-option"] = "blahblah";
     write_config(options);
