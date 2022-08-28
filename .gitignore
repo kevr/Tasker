@@ -4,3 +4,4 @@
 
 /subprojects/googletest*
 /subprojects/packagecache
+/subprojects/fmt-*
