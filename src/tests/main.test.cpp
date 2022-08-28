@@ -1,10 +1,9 @@
-#include "utility.hpp"
-#include <gtest/internal/gtest-port.h>
 #define main main_real
 #include "main.cpp"
 #undef main
 
-#include "../mocks/ncurses.hpp"
+#include "mocks/ncurses.hpp"
+#include "utility.hpp"
 #include <gtest/gtest.h>
 
 using ::testing::_;
@@ -40,9 +39,7 @@ public:
 
     void TearDown() override
     {
-        if (tmpdir.size()) {
-            std::filesystem::remove_all(tmpdir);
-        }
+        std::filesystem::remove_all(tmpdir);
     }
 };
 
@@ -206,6 +203,7 @@ TEST_F(main_test, custom_config)
 
 TEST_F(main_test, custom_config_unknown_option)
 {
+    std::cout << "HOME=" << env::variable("HOME") << std::endl;
     std::map<std::string, std::string> options;
     options["fake-option"] = "blahblah";
     write_config(options);

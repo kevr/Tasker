@@ -8,6 +8,14 @@
 #include <stdexcept>
 #include <tuple>
 
+#ifdef TESTING
+// Include testing.hpp if -DTESTING was given to resolve
+// static symbols defined which setup HOME redirection
+// for tests. This is located here in the config module
+// because HOME lookup is only done during config assembly.
+#include "testing.hpp"
+#endif
+
 namespace tasker::cfg
 {
 

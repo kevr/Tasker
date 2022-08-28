@@ -37,9 +37,7 @@ public:
 
     void TearDown() override
     {
-        if (tmpdir.size()) {
-            std::filesystem::remove_all(tmpdir);
-        }
+        std::filesystem::remove_all(tmpdir);
     }
 };
 

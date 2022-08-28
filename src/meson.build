@@ -21,6 +21,26 @@ tasker_dep = declare_dependency(
   include_directories : inc,
 )
 
+tasker_test_lib = static_library(
+  'tasker_test',
+  'projects/project.cpp',
+  'tasks/task.cpp',
+  'users/user.cpp',
+  'config/config.cpp',
+  'env.cpp',
+  'utility.cpp',
+
+  'testing.cpp',
+  cpp_args : '-DTESTING',
+  include_directories : inc,
+)
+tasker_test_dep = declare_dependency(
+  dependencies : [boost_po_dep],
+  link_with : [tasker_test_lib],
+  compile_args : ['-DTESTING'],
+  include_directories : inc,
+)
+
 ncurses_lib = static_library(
   'ncurses-static',
   'ext/ncurses.cpp',
@@ -33,7 +53,7 @@ tasker = executable(
   'main.cpp',
   install : true,
   dependencies : [tasker_dep],
-  link_with : [tasker_lib, ncurses_lib],
+  link_with : [ncurses_lib],
 )
 
 stub_lib = static_library(
