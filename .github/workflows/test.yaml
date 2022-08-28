@@ -46,7 +46,7 @@ jobs:
           hide_branch_rate: true
           output: both
 
-      - name: Collect Coverage for Badge
+      - name: Collect Badge Information
         run: |
           REF=${{ github.ref }}
 
@@ -65,8 +65,19 @@ jobs:
         with:
           auth: ${{ secrets.GIST }}
           gistID: 98692fb94e55e0667afb58f20b67f3f2
-          filename: tasker__${{ env.BRANCH }}.json
-          label: Test Coverage
+          filename: tasker__${{ env.BRANCH }}_coverage.json
+          label: coverage
           message: ${{ env.COVERAGE }}
-          color: '#32a852'
-          namedLogo: jest
+          labelColor: '#2b3136'
+          color: '#6524b5'
+
+      - name: Create Test Status Badge
+        uses: schneegans/dynamic-badges-action@v1.0.0
+        with:
+          auth: ${{ secrets.GIST }}
+          gistID: 98692fb94e55e0667afb58f20b67f3f2
+          filename: tasker__${{ env.BRANCH }}_test.json
+          label: tests
+          message: "passing"
+          labelColor: '#2b3136'
+          color: '#6524b5'

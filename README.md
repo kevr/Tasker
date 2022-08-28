@@ -1,10 +1,9 @@
 tasker
 ======
 
-
-[![build](https://github.com/kevr/tasker/actions/workflows/build.yaml/badge.svg?branch=master)](https://github.com/kevr/tasker/actions/workflows/build.yaml) [![test](https://github.com/kevr/tasker/actions/workflows/test.yaml/badge.svg?branch=master)](https://github.com/kevr/tasker/actions/workflows/test.yaml)
-<br>
-[![Test Coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/kevr/98692fb94e55e0667afb58f20b67f3f2/raw/tasker__heads_master.json)](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/kevr/98692fb94e55e0667afb58f20b67f3f2/raw/tasker__heads_master.json)
+[![build](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/kevr/98692fb94e55e0667afb58f20b67f3f2/raw/tasker__heads_master_build.json)](https://github.com/kevr/tasker/actions/workflows/build.yaml)
+[![test](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/kevr/98692fb94e55e0667afb58f20b67f3f2/raw/tasker__heads_master_test.json)](https://github.com/kevr/tasker/actions/workflows/test.yaml)
+[![coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/kevr/98692fb94e55e0667afb58f20b67f3f2/raw/tasker__heads_master_coverage.json)](https://github.com/kevr/tasker/actions/workflows/test.yaml)
 
 A task management program which interfaces with various services
 and linux task formats.

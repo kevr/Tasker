@@ -24,3 +24,22 @@ jobs:
         run: |
           cd build
           ninja
+
+      - name: Collect Badge Information
+        run: |
+          REF=${{ github.ref }}
+
+          IFS='/' read -ra PATHS <<< "$REF"
+          BRANCH_NAME="${PATHS[1]}_${PATHS[2]}"
+          echo "BRANCH=$(echo ${BRANCH_NAME})" >> $GITHUB_ENV
+
+      - name: Create Build Status Badge
+        uses: schneegans/dynamic-badges-action@v1.0.0
+        with:
+          auth: ${{ secrets.GIST }}
+          gistID: 98692fb94e55e0667afb58f20b67f3f2
+          filename: tasker__${{ env.BRANCH }}_build.json
+          label: build
+          message: "passing"
+          labelColor: '#2b3136'
+          color: '#6524b5'
