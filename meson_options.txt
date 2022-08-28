@@ -1,1 +1,3 @@
 option('version', type : 'string', value : '0.0.0', description : 'project version')
+option('build_tests', type : 'boolean', value : true, description : 'compile tests')
+option('build_bin', type : 'boolean', value : true, description : 'compile binary')
