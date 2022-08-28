@@ -10,6 +10,13 @@ tasker_lib = static_library(
   'projects/project.cpp',
   'tasks/task.cpp',
   'users/user.cpp',
+  'config/config.cpp',
+  'utility.cpp',
+  include_directories : inc,
+)
+tasker_dep = declare_dependency(
+  dependencies : [boost_po_dep],
+  link_with : [tasker_lib],
   include_directories : inc,
 )
 
@@ -24,6 +31,7 @@ tasker = executable(
   'tasker',
   'main.cpp',
   install : true,
+  dependencies : [tasker_dep],
   link_with : [tasker_lib, ncurses_lib],
 )
 

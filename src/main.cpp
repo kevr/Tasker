@@ -5,6 +5,7 @@
  * All Rights Reserved.
  **/
 #include "config.hpp"
+#include "config/config.hpp"
 #include "ncurses.hpp"
 #include "tui.hpp"
 #include "utility.hpp"
@@ -15,8 +16,20 @@ using namespace tasker;
 
 int tasker_main(ext::ncurses &ncurses, int argc, char *argv[])
 {
-    // Print out the program name and version.
-    std::cout << PROG << " " << VERSION << std::endl;
+    // Parse command line arguments and handle them.
+    auto &conf = cfg::config::ref();
+    conf.parse_args(argc, argv);
+
+    if (conf.exists("help")) {
+        std::cout << "usage: " << conf.usage() << std::endl
+                  << conf << std::endl;
+        return SUCCESS;
+    }
+
+    if (conf.exists("version")) {
+        std::cout << VERSION << std::endl;
+        return SUCCESS;
+    }
 
     // Construct and initialize the TUI
     tui::tui term(ncurses);

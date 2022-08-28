@@ -1,7 +1,9 @@
 #ifndef SRC_CONFIG_HPP
 #define SRC_CONFIG_HPP
 
-const char *const PROG = "tasker";
+#include <string>
+
+const std::string PROG = "tasker";
 const char *const VERSION = "@version@";
 
 #endif /* SRC_CONFIG_HPP */
