@@ -4,6 +4,10 @@ project(
   default_options : ['cpp_std=c++20']
 )
 
+fmt_proj = subproject('fmt')
+fmt_inc = fmt_proj.get_variable('fmt_inc')
+fmt_dep = fmt_proj.get_variable('fmt_dep')
+
 boost_po_dep = dependency(
   'boost',
   modules : ['program_options', 'system'],

@@ -3,8 +3,14 @@ gtest_dep = gtest_proj.get_variable('gtest_dep')
 gmock_dep = gtest_proj.get_variable('gmock_dep')
 gtest_main_dep = gtest_proj.get_variable('gtest_main_dep')
 
-test_deps = [tasker_test_dep, gtest_dep, gtest_main_dep, stub_dep, gmock_dep]
-test_mock_deps = test_deps + [gmock_dep]
+test_deps = [
+  tasker_test_dep,
+  gtest_dep,
+  gtest_main_dep,
+  stub_dep,
+  gmock_dep,
+  fmt_dep
+]
 
 main_test = executable(
   'main.test',
@@ -75,3 +81,10 @@ env_test = executable(
   dependencies : test_deps,
 )
 test('env test', env_test)
+
+logging_test = executable(
+  'logging.test',
+  'logging.test.cpp',
+  dependencies : test_deps,
+)
+test('logging test', logging_test)

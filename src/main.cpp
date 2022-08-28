@@ -7,6 +7,7 @@
 #include "config.hpp"
 #include "config/config.hpp"
 #include "env.hpp"
+#include "logging.hpp"
 #include "ncurses.hpp"
 #include "tui.hpp"
 #include "utility.hpp"
@@ -15,10 +16,18 @@
 #include <thread>
 using namespace tasker;
 
+static logger logging;
+static std::ofstream ofs;
+
 int tasker_main(ext::ncurses &ncurses, int argc, char *argv[])
 {
     // Parse command line arguments and handle them.
     auto &conf = cfg::config::ref();
+    namespace po = boost::program_options;
+    conf.option("logfile,l",
+                po::value<std::string>(),
+                "designate a log file instead of stderr");
+
     conf.parse_args(argc, argv);
 
     if (conf.exists("help")) {
@@ -50,13 +59,26 @@ int tasker_main(ext::ncurses &ncurses, int argc, char *argv[])
         }
     }
 
+    if (conf.exists("logfile")) {
+        auto logfile = conf["logfile"];
+        ofs.open(logfile.c_str(), std::ios::out);
+        logger::stream(ofs);
+    }
+
     // Construct and initialize the TUI
+    logging.info("starting tui...");
     tui::tui term(ncurses);
     if (!term.init())
         return term.end();
 
     // Refresh the TUI
     term.refresh();
+
+    // TODO: TUI input logic, wait-state until quit key
+
+    // Restore logger pointer and close any open file stream
+    logger::reset();
+    ofs.close();
 
     // End the TUI
     return term.end();

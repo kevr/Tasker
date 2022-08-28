@@ -16,16 +16,17 @@ if build_tests
     'config/config.cpp',
     'env.cpp',
     'utility.cpp',
+    'logging.cpp',
 
     'testing.cpp',
     cpp_args : '-DTESTING',
-    include_directories : inc,
+    include_directories : [inc, fmt_inc],
   )
   tasker_test_dep = declare_dependency(
-    dependencies : [boost_po_dep],
+    dependencies : [boost_po_dep, fmt_dep],
     link_with : [tasker_test_lib],
     compile_args : ['-DTESTING'],
-    include_directories : inc,
+    include_directories : [inc, fmt_inc],
   )
 
   stub_lib = static_library(
@@ -53,13 +54,14 @@ if build_bin
     'config/config.cpp',
     'env.cpp',
     'utility.cpp',
-    include_directories : inc,
+    'logging.cpp',
+    include_directories : [inc, fmt_inc],
   )
 
   tasker_dep = declare_dependency(
-    dependencies : [boost_po_dep],
+    dependencies : [boost_po_dep, fmt_dep],
     link_with : [tasker_lib],
-    include_directories : inc,
+    include_directories : [inc, fmt_inc],
   )
 
   ncurses_lib = static_library(
@@ -73,7 +75,7 @@ if build_bin
     'tasker',
     'main.cpp',
     install : true,
-    dependencies : [tasker_dep],
+    dependencies : [tasker_dep, fmt_dep],
     link_with : [ncurses_lib],
   )
 endif
