@@ -68,3 +68,10 @@ utility_test = executable(
   dependencies : test_deps,
 )
 test('utility test', utility_test)
+
+env_test = executable(
+  'env.test',
+  'env.test.cpp',
+  dependencies : test_deps,
+)
+test('env test', env_test)

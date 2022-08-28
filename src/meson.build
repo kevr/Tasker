@@ -11,6 +11,7 @@ tasker_lib = static_library(
   'tasks/task.cpp',
   'users/user.cpp',
   'config/config.cpp',
+  'env.cpp',
   'utility.cpp',
   include_directories : inc,
 )

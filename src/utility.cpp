@@ -1,7 +1,7 @@
 #include "utility.hpp"
 #include "config.hpp"
 #include <algorithm>
-#include <filesystem>
+#include <fstream>
 #include <stdexcept>
 using namespace tasker;
 
@@ -28,6 +28,12 @@ std::string strip(std::string orig, char delim)
 {
     orig.erase(std::remove(orig.begin(), orig.end(), delim), orig.end());
     return orig;
+}
+
+void touch(std::filesystem::path path)
+{
+    std::ofstream ofs(path, std::ios::out);
+    ofs.close();
 }
 
 std::string test::make_temp_directory()

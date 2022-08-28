@@ -1,6 +1,7 @@
 #ifndef SRC_UTILITY_HPP
 #define SRC_UTILITY_HPP
 
+#include <filesystem>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -35,6 +36,7 @@ int error(int rc, T &&arg)
 
 std::vector<std::string> split(const std::string &str, char delim);
 std::string strip(std::string orig, char delim = ' ');
+void touch(std::filesystem::path path);
 
 namespace tasker::test
 {
