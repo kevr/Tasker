@@ -2,7 +2,7 @@ tasker
 ======
 
 
-[![build](https://github.com/kevr/tasker/actions/workflows/build.yaml/badge.svg?branch=master)](https://github.com/kevr/tasker/actions/workflows/build.yaml)
+[![build](https://github.com/kevr/tasker/actions/workflows/build.yaml/badge.svg?branch=master)](https://github.com/kevr/tasker/actions/workflows/build.yaml) [![test](https://github.com/kevr/tasker/actions/workflows/test.yaml/badge.svg?branch=master)](https://github.com/kevr/tasker/actions/workflows/test.yaml)
 <br>
 [![Test Coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/kevr/98692fb94e55e0667afb58f20b67f3f2/raw/tasker__heads_master.json)](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/kevr/98692fb94e55e0667afb58f20b67f3f2/raw/tasker__heads_master.json)
 
