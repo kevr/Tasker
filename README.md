@@ -10,16 +10,9 @@ and linux task formats.
 
 See our MIT [LICENSE](LICENSE) file.
 
-## Dependencies
+## Building
 
-- `-std=c++20` supporting C++ compiler
-- [meson](https://github.com/mesonbuild/meson) build framework
-- [gtest](https://github.com/google/googletest) test framework subproject
-    - Fetched and built via `meson` when you configure and build the project.
-
-## Build
-
-See [Dependencies](#dependencies) for required prerequisite software.
+See [Build dependencies](#build-dependencies) for prerequisite software.
 
 First, configure a build directory:
 
@@ -30,7 +23,9 @@ You can customize some build configuration:
     # Set a version
     $ meson -Dversion="1.6.0" build
 
-<span id="test-cov-config">You can configure meson to enable test coverage [1]:</span>
+<span id="test-cov-config">
+You can configure meson to <u>enable test coverage</u>:
+</span>
 
     # Enable test coverage
     $ meson -Db_coverage=true build
@@ -42,24 +37,67 @@ Enter into the new `build` directory and compile the project:
 
 ## Running
 
-Once you've [built](#build) the project, you can run the
+See [Runtime dependencies](#runtime-dependencies) for prerequisite software.
+
+Once you've [built](#building) the project, you can run the
 program directly:
 
     $ cd build
     $ ./src/tasker
+
+## Dependencies
+
+- [Runtime dependencies](#runtime-dependencies) must be installed on any
+  system wishing to run this program after compilation
+- [Build dependencies](#build-dependencies) must be installed on any
+  system meant to compile this program
+- [Internal dependencies](#internal-dependencies) will be acquired and built
+  via `meson` and do not require user management
+
+#### Runtime dependencies
+
+A user intending to run a compiled binary of this project requires
+the following library dependencies:
+
+- [ncurses](https://github.com/mirror/ncurses) for terminal user interface
+  framework
+- [boost::program_options](https://github.com/boostorg/boost) for symbols for
+  command-line/config parser
+- [boost::system](https://github.com/boostorg/boost) for symbols for system
+utilities
+
+#### Build dependencies
+
+In addition to [Runtime dependencies](#runtime-dependencies), a user
+intending to build this project requires the following dependencies:
+
+- `-std=c++20` supporting C++ compiler
+- [meson](https://github.com/mesonbuild/meson) build framework
+- [git](https://github.com/git/git) source code management
+
+#### Internal dependencies
+
+*Internal dependencies* are dependencies which are fetched via `meson`
+to build the project. Users don't have to worry about obtaining these
+dependencies otherwise.
+
+- [fmt](https://github.com/fmtlib/fmt) (static runtime) for complex string
+  formatting
+- [gtest](https://github.com/google/googletest) (shared runtime) test framework
+  subproject
 
 ## Testing
 
 Coverage support depends on [gcovr](https://github.com/gcovr/gcovr) and/or
 [lcov](https://github.com/linux-test-project/lcov).
 
-If you want code coverage, [configure meson to enable test coverage](#test-cov-config) [1].
-
-After [Building](#build), you can run tests:
+After [building](#building), you can run tests:
 
     $ ninja test
 
-After running tests, you can produce coverage:
+After running tests from a
+[build configured to enable test coverage](#test-cov-config),
+you can produce coverage:
 
     # Generate gcovr report
     $ ninja coverage-text && cat meson-logs/coverage.txt
