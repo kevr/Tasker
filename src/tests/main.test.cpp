@@ -1,3 +1,4 @@
+#include <gtest/internal/gtest-port.h>
 #define main main_real
 #include "main.cpp"
 #undef main
@@ -216,4 +217,24 @@ TEST_F(main_test, custom_config_unknown_option)
 
     auto rc = main_real(argc, argv);
     ASSERT_EQ(rc, ERR);
+}
+
+TEST_F(main_test, logfile)
+{
+    std::filesystem::path tmpdir;
+    auto logpath = tmpdir / "test.log";
+
+    const char *_argv[] = {
+        PROG.c_str(), "--logfile", logpath.c_str(), nullptr
+    };
+    auto argv = const_cast<char **>(_argv);
+    int argc = 3;
+
+    auto rc = main_real(argc, argv);
+    ASSERT_EQ(rc, OK);
+
+    std::ifstream ifs(logpath.c_str());
+    std::string output;
+    std::getline(ifs, output);
+    ASSERT_EQ(output, "[INFO] starting tui...");
 }
