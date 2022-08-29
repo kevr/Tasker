@@ -4,8 +4,8 @@
 #include "../ncurses.hpp"
 #include "object.hpp"
 #include <algorithm>
-#include <list>
 #include <memory>
+#include <vector>
 
 namespace tasker::tui
 {
@@ -32,7 +32,7 @@ protected:
 
     using basic_window_ptr = std::shared_ptr<basic_window<CI>>;
 
-    std::list<basic_window_ptr> m_children;
+    std::vector<basic_window_ptr> m_children;
 
     // Dimensions
     int m_x { 0 };

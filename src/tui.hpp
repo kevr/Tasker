@@ -1,6 +1,7 @@
 #ifndef SRC_TUI_HPP
 #define SRC_TUI_HPP
 
+#include "tui/pane.hpp"
 #include "tui/window.hpp"
 #include "utility.hpp"
 #include <stdexcept>
@@ -25,6 +26,7 @@ private:
     CI &ncurses;
 
     std::shared_ptr<root_window<CI>> root;
+    std::shared_ptr<pane<CI>> m_pane;
 
     // `tui` state
     int m_return_code = 0;
@@ -35,6 +37,7 @@ public:
     tui(CI &ncurses) noexcept
         : ncurses(ncurses)
         , root(std::make_shared<root_window<CI>>(ncurses))
+        , m_pane(std::make_shared<pane<CI>>(ncurses, root))
     {
     }
 
@@ -76,12 +79,17 @@ public:
             return *this;
         }
 
+        if (auto rc = m_pane->init()) {
+            m_return_code = error(rc, "m_pane->init() failed: ", rc);
+            return *this;
+        }
+
         return *this;
     }
 
     int refresh() noexcept
     {
-        return root->refresh();
+        return root->refresh_all();
     }
 
     int return_code() const noexcept
@@ -111,6 +119,8 @@ public:
         }
         m_ended = true;
         m_created = false;
+
+        m_pane->end();
 
         // Just destruct the root window in all cases; in the case where we
         // error out after running initscr(), this will be able to undo what

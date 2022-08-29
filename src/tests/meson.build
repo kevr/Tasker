@@ -88,3 +88,10 @@ logging_test = executable(
   dependencies : test_deps,
 )
 test('logging test', logging_test)
+
+pane_test = executable(
+  'pane.test',
+  'pane.test.cpp',
+  dependencies : test_deps,
+)
+test('pane test', pane_test)

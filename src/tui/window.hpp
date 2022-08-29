@@ -51,7 +51,7 @@ public:
         return std::make_tuple(m_x_offset, m_y_offset);
     }
 
-    int init() noexcept final override
+    int init() noexcept override
     {
         if (!this->ncurses) {
             return error(ERROR, "window::ncurses was null during init()");
@@ -67,7 +67,7 @@ public:
         return OK;
     }
 
-    int refresh() noexcept final override
+    int refresh() noexcept override
     {
         if (!*this) {
             return error(ERR, "window::refresh() called on a null handle");
@@ -76,7 +76,7 @@ public:
         return this->ncurses->wrefresh(this->m_win);
     }
 
-    int end() noexcept final override
+    int end() noexcept override
     {
         if (this->m_win) {
             auto rc = this->ncurses->delwin(this->m_win);
