@@ -39,7 +39,7 @@ jobs:
         run: meson -Dbuild_bin=true -Dbuild_tests=false build
 
       - name: Build Project
-        run: ninja -C build
+        run: ninja -C build -j2
 
       - name: Collect Badge Information
         run: |

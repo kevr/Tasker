@@ -39,7 +39,7 @@ jobs:
         run: meson -Db_coverage=true -Dbuild_bin=false -Dbuild_tests=true build
 
       - name: Build Project
-        run: ninja -C build
+        run: ninja -C build -j2
 
       - name: Test Project
         run: ninja -C build test
