@@ -30,6 +30,14 @@ You can configure meson to <u>enable test coverage</u>:
     # Enable test coverage
     $ meson -Db_coverage=true build
 
+If you're only building tests or the binary, you can tell `meson`:
+
+    # Build tests with coverage enabled
+    $ meson -Db_coverage=true -Dbuild_bin=false -Dbuild_tests=true build
+
+    # Build only the binary without coverage enabled
+    $ meson -Dbuild_tests=false -Dbuild_bin=true build
+
 Enter into the new `build` directory and compile the project:
 
     $ cd build
@@ -91,7 +99,7 @@ dependencies otherwise.
 Coverage support depends on [gcovr](https://github.com/gcovr/gcovr) and/or
 [lcov](https://github.com/linux-test-project/lcov).
 
-After [building](#building), you can run tests:
+After [building tests](#building), you can run all of them with `ninja`:
 
     $ ninja test
 
