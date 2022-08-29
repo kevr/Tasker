@@ -21,9 +21,7 @@ jobs:
         run: meson -Dbuild_bin=true -Dbuild_tests=false build
 
       - name: Build Project
-        run: |
-          cd build
-          ninja
+        run: ninja -C build
 
       - name: Collect Badge Information
         run: |

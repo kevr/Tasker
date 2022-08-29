@@ -21,19 +21,17 @@ jobs:
         run: meson -Db_coverage=true -Dbuild_bin=false -Dbuild_tests=true build
 
       - name: Build Project
-        run: |
-          cd build
-          ninja
+        run: ninja -C build
 
       - name: Test Project
-        run: |
-          cd build
-          ninja test
+        run: ninja -C build test
 
       - name: Generate Code Coverage Reports
         run: |
           cd build
-          ninja coverage-text coverage-xml coverage-html
+          ninja coverage-text
+          ninja coverage-xml
+          ninja coverage-html
           cat meson-logs/coverage.txt
 
       - uses: actions/upload-artifact@v3
