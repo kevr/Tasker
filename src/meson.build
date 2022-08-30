@@ -5,20 +5,25 @@ configure_file(
   configuration : conf
 )
 
+tasker_sources = [
+  'projects/project.cpp',
+  'tasks/task.cpp',
+  'users/user.cpp',
+  'config/config.cpp',
+  'env.cpp',
+  'utility.cpp',
+  'logging.cpp',
+]
+
 build_tests = get_option('build_tests')
 
 if build_tests
   tasker_test_lib = static_library(
     'tasker_test',
-    'projects/project.cpp',
-    'tasks/task.cpp',
-    'users/user.cpp',
-    'config/config.cpp',
-    'env.cpp',
-    'utility.cpp',
-    'logging.cpp',
-
-    'testing.cpp',
+    [
+      tasker_sources,
+      'testing.cpp',
+    ],
     cpp_args : '-DTESTING',
     include_directories : [inc, fmt_inc],
   )
@@ -48,13 +53,7 @@ build_bin = get_option('build_bin')
 if build_bin
   tasker_lib = static_library(
     'tasker',
-    'projects/project.cpp',
-    'tasks/task.cpp',
-    'users/user.cpp',
-    'config/config.cpp',
-    'env.cpp',
-    'utility.cpp',
-    'logging.cpp',
+    tasker_sources,
     include_directories : [inc, fmt_inc],
   )
 
