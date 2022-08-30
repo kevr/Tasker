@@ -71,7 +71,11 @@ int tasker_main(ext::ncurses &ncurses, int argc, char *argv[])
 
     if (conf.exists("logfile")) {
         auto logfile = conf["logfile"];
-        ofs.open(logfile.c_str(), std::ios::out);
+        ofs.open(logfile.c_str(), std::ios::out | std::ios::app);
+        logger::stream(ofs);
+    } else {
+        // Use default log file 'tasker.log'
+        ofs.open("tasker.log", std::ios::out | std::ios::app);
         logger::stream(ofs);
     }
 
