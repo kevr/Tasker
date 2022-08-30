@@ -82,6 +82,8 @@ public:
             return *this;
         }
 
+        m_pane->inherit();  // Update sizes relative to the root
+        m_pane->padding(1); // Set a padding of 1
         if (auto rc = m_pane->init()) {
             m_return_code = error(rc, "m_pane->init() failed: ", rc);
             return *this;
