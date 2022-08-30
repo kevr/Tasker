@@ -287,6 +287,8 @@ TEST_F(main_test, resize)
     EXPECT_CALL(ncurses, refresh()).WillRepeatedly(Return(OK));
     EXPECT_CALL(ncurses, wrefresh(_)).WillRepeatedly(Return(OK));
     EXPECT_CALL(ncurses, w_add_str(_, _)).WillRepeatedly(Return(OK));
+    EXPECT_CALL(ncurses, wborder(_, _, _, _, _, _, _, _, _))
+        .WillRepeatedly(Return(OK));
 
     EXPECT_CALL(ncurses, getchar())
         .Times(2)
