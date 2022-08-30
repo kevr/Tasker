@@ -52,10 +52,10 @@ int ext::ncurses::endwin() noexcept
     return ::endwin();
 }
 
-WINDOW *ext::ncurses::subwin(WINDOW *parent, int nlines, int ncols,
+WINDOW *ext::ncurses::derwin(WINDOW *parent, int nlines, int ncols,
                              int begin_y, int begin_x) noexcept
 {
-    return ::subwin(parent, nlines, ncols, begin_y, begin_x);
+    return ::derwin(parent, nlines, ncols, begin_y, begin_x);
 }
 
 void ext::ncurses::get_max_yx(WINDOW *win, int &y, int &x) noexcept

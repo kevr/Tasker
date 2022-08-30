@@ -19,7 +19,7 @@ public:
     MOCK_METHOD(int, endwin, (), (noexcept, override));
     MOCK_METHOD(void, get_max_yx, (WINDOW *, int &, int &),
                 (noexcept, override));
-    MOCK_METHOD(WINDOW *, subwin, (WINDOW *, int, int, int, int),
+    MOCK_METHOD(WINDOW *, derwin, (WINDOW *, int, int, int, int),
                 (noexcept, override));
     MOCK_METHOD(int, delwin, (WINDOW *), (noexcept, override));
     MOCK_METHOD(int, w_add_str, (WINDOW *, const char *),

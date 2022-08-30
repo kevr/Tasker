@@ -64,7 +64,7 @@ int ext::ncurses::endwin() noexcept
 }
 
 // Child window functions
-WINDOW *ext::ncurses::subwin(WINDOW *parent, int, int, int, int) noexcept
+WINDOW *ext::ncurses::derwin(WINDOW *parent, int, int, int, int) noexcept
 {
     WINDOW *win = new WINDOW;
     m_windows[win] = parent;

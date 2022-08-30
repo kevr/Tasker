@@ -50,7 +50,7 @@ public:
     virtual int endwin() noexcept;
 
     // Child window functions
-    virtual WINDOW *subwin(WINDOW *, int, int, int, int) noexcept;
+    virtual WINDOW *derwin(WINDOW *, int, int, int, int) noexcept;
     virtual void get_max_yx(WINDOW *, int &, int &) noexcept;
     virtual int delwin(WINDOW *) noexcept;
 

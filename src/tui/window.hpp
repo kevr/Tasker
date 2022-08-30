@@ -85,12 +85,12 @@ public:
         int yo = m_y_offset + m_padding;
         int xo = m_x_offset + m_padding;
 
-        auto message = fmt::format("subwin({0}, {1}, {2}, {3})", y, x, yo, xo);
+        auto message = fmt::format("derwin({0}, {1}, {2}, {3})", y, x, yo, xo);
         logging.debug(message);
 
-        this->m_win = this->ncurses->subwin(m_parent->handle(), y, x, yo, xo);
+        this->m_win = this->ncurses->derwin(m_parent->handle(), y, x, yo, xo);
         if (this->m_win == nullptr) {
-            return error(ERROR_SUBWIN, "subwin() returned a nullptr");
+            return error(ERROR_DERWIN, "derwin() returned a nullptr");
         }
 
         m_parent->add_child(this->shared_from_this());

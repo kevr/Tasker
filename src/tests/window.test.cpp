@@ -100,8 +100,8 @@ TEST_F(mock_window_test, subwin_fails)
     using window_t = tui::window<ext::ncurses>;
     auto window = std::make_shared<window_t>(ncurses, root);
 
-    EXPECT_CALL(ncurses, subwin(_, _, _, _, _)).WillOnce(Return(nullptr));
-    ASSERT_EQ(window->init(), ERROR_SUBWIN);
+    EXPECT_CALL(ncurses, derwin(_, _, _, _, _)).WillOnce(Return(nullptr));
+    ASSERT_EQ(window->init(), ERROR_DERWIN);
 }
 
 TEST_F(mock_window_test, root_refresh_all)
@@ -116,7 +116,7 @@ TEST_F(mock_window_test, root_refresh_all)
     auto window = std::make_shared<window_t>(ncurses, root);
 
     WINDOW child;
-    EXPECT_CALL(ncurses, subwin(_, _, _, _, _)).WillOnce(Return(&child));
+    EXPECT_CALL(ncurses, derwin(_, _, _, _, _)).WillOnce(Return(&child));
     window->init();
 
     EXPECT_CALL(ncurses, wrefresh(_)).WillOnce(Return(OK));
@@ -148,13 +148,13 @@ TEST_F(mock_window_test, refresh_all)
     auto window = std::make_shared<window_t>(ncurses, root);
 
     WINDOW child;
-    EXPECT_CALL(ncurses, subwin(_, _, _, _, _)).WillOnce(Return(&child));
+    EXPECT_CALL(ncurses, derwin(_, _, _, _, _)).WillOnce(Return(&child));
     window->init();
 
     auto leaf = std::make_shared<window_t>(ncurses, window);
 
     WINDOW child2;
-    EXPECT_CALL(ncurses, subwin(_, _, _, _, _)).WillOnce(Return(&child2));
+    EXPECT_CALL(ncurses, derwin(_, _, _, _, _)).WillOnce(Return(&child2));
     leaf->init();
 
     EXPECT_CALL(ncurses, wrefresh(_)).Times(2).WillRepeatedly(Return(OK));

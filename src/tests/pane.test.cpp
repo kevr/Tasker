@@ -36,7 +36,7 @@ public:
                 x = 800;
                 y = 600;
             }));
-        EXPECT_CALL(ncurses, subwin(_, _, _, _, _))
+        EXPECT_CALL(ncurses, derwin(_, _, _, _, _))
             .WillOnce(Return(&win_pane));
         EXPECT_CALL(ncurses, delwin(_)).WillRepeatedly(Return(OK));
 
@@ -68,7 +68,7 @@ TEST_F(pane_test, focus_on_empty_children)
 TEST_F(pane_test, focus_out_of_range)
 {
     WINDOW win_pane_child;
-    EXPECT_CALL(ncurses, subwin(_, _, _, _, _))
+    EXPECT_CALL(ncurses, derwin(_, _, _, _, _))
         .WillOnce(Return(&win_pane_child));
 
     auto window = std::make_shared<window_t>(ncurses, m_pane);
@@ -81,7 +81,7 @@ TEST_F(pane_test, focus_out_of_range)
 TEST_F(pane_test, focus_refresh_error)
 {
     WINDOW win_pane_child;
-    EXPECT_CALL(ncurses, subwin(_, _, _, _, _))
+    EXPECT_CALL(ncurses, derwin(_, _, _, _, _))
         .WillOnce(Return(&win_pane_child));
 
     auto window = std::make_shared<window_t>(ncurses, m_pane);

@@ -29,7 +29,7 @@ void expect_root(CI &ncurses, WINDOW *win)
 template <typename CI>
 void expect_pane(CI &ncurses, WINDOW *win)
 {
-    EXPECT_CALL(ncurses, subwin(_, _, _, _, _)).WillOnce(Return(win));
+    EXPECT_CALL(ncurses, derwin(_, _, _, _, _)).WillRepeatedly(Return(win));
     EXPECT_CALL(ncurses, delwin(_)).WillOnce(Return(OK));
 }
 
@@ -141,7 +141,7 @@ TEST(tui, pane_init_fails)
 
     ext::mock_ncurses ncurses;
     expect_root(ncurses, &win_root);
-    EXPECT_CALL(ncurses, subwin(_, _, _, _, _)).WillOnce(Return(nullptr));
+    EXPECT_CALL(ncurses, derwin(_, _, _, _, _)).WillOnce(Return(nullptr));
 
     tui::tui<ext::ncurses> term(ncurses);
     ASSERT_FALSE(term.init());
