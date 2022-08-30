@@ -27,6 +27,7 @@ int tasker_main(ext::ncurses &ncurses, int argc, char *argv[])
     // Parse command line arguments and handle them.
     auto &conf = cfg::config::ref();
     namespace po = boost::program_options;
+    conf.option("debug,d", "enable debug logging");
     conf.option("logfile,l",
                 po::value<std::string>(),
                 "designate a log file instead of stderr");
@@ -62,6 +63,10 @@ int tasker_main(ext::ncurses &ncurses, int argc, char *argv[])
                       << path.value().string() << std::endl;
             return ERR;
         }
+    }
+
+    if (conf.exists("debug")) {
+        logger::set_debug(true);
     }
 
     if (conf.exists("logfile")) {

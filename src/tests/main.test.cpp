@@ -14,13 +14,12 @@ using ::testing::Return;
 class main_test : public ::testing::Test
 {
 protected:
-    std::string tmpdir;
+    std::filesystem::path tmpdir;
 
 protected:
     void write_config(const std::map<std::string, std::string> &options)
     {
-        std::filesystem::path p(tmpdir);
-        p /= "config";
+        std::filesystem::path p = tmpdir / "config";
         {
             std::ofstream ofs(p.c_str(), std::ios::out);
             for (auto &kv : options) {
@@ -237,4 +236,27 @@ TEST_F(main_test, logfile)
     std::string output;
     std::getline(ifs, output);
     ASSERT_EQ(output, "[INFO] starting tui...");
+}
+
+TEST_F(main_test, enable_debug_logging)
+{
+    const auto logpath = tmpdir / "tasker.log";
+    const char *_argv[] = {
+        PROG.c_str(), "--debug", "--logfile", logpath.c_str(), nullptr
+    };
+    auto argv = const_cast<char **>(_argv);
+    int argc = 4;
+
+    auto rc = main_real(argc, argv);
+    ASSERT_EQ(rc, OK);
+
+    std::ifstream ifs(logpath.c_str());
+    std::string line;
+    std::string content;
+    while (std::getline(ifs, line)) {
+        content += line;
+        content.push_back('\n');
+    }
+
+    ASSERT_NE(content.find("[DEBUG]"), std::string::npos);
 }

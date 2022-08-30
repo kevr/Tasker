@@ -11,19 +11,17 @@ class logger
 {
 private:
     static std::ostream *out;
-
-private:
-    void p_info(const std::string &line);
-    void p_error(const std::string &line);
-    void p_warning(const std::string &line);
+    static bool debug_enabled;
 
 public:
     static std::ostream &stream(std::ostream &os);
     static void reset();
+    static void set_debug(bool enabled);
 
-    void info(const std::string &msg);
-    void error(const std::string &msg);
-    void warning(const std::string &msg);
+    void info(const std::string &line);
+    void error(const std::string &line);
+    void warning(const std::string &line);
+    void debug(const std::string &line);
 };
 
 }; // namespace tasker

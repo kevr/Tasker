@@ -36,3 +36,11 @@ TEST_F(logging_test, error)
     logger.error("Test");
     ASSERT_EQ(ss.str(), "[ERROR] Test\n");
 }
+
+TEST_F(logging_test, debug)
+{
+    tasker::logger::set_debug(true);
+    logger.debug("Test");
+    ASSERT_EQ(ss.str(), "[DEBUG] Test\n");
+    tasker::logger::set_debug(false);
+}
