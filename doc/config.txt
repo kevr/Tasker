@@ -1,0 +1,20 @@
+##
+## Example configuration file for the tasker program.
+## 
+## A custom path can be provided to tasker using the --config
+## command line option. Otherwise, tasker searches in the following
+## locations for a valid, readable configuration file:
+##
+## 1. ~/.config/tasker/config
+## 2. /etc/tasker/config
+##
+
+## General options
+# The `logfile` option controls where logs are written
+# during the program's lifetime.
+#logfile = /path/to/logfile.txt
+
+## Keybindings
+# The `key_quit` option controls which keypress is bound
+# to quitting the program.
+key_quit = q

@@ -41,7 +41,7 @@ If you're only building tests or the binary, you can tell `meson`:
 Enter into the new `build` directory and compile the project:
 
     $ cd build
-    $ ninja
+    build$ ninja
 
 ## Running
 
@@ -50,8 +50,18 @@ See [Runtime dependencies](#runtime-dependencies) for prerequisite software.
 Once you've [built](#building) the project, you can run the
 program directly:
 
-    $ cd build
-    $ ./src/tasker
+    build$ ./src/tasker
+
+Each variable in [Configuration](#configuration) can be set on the
+command line, as well as a few shell-specific options. See `--help`
+for a complete breakdown:
+
+    build$ ./src/tasker --help
+
+## Configuration
+
+See [doc/config.txt](doc/config.txt) for an example config which
+contains documentation about config locations that tasker searches.
 
 ## Dependencies
 
