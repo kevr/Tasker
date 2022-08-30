@@ -80,6 +80,11 @@ int ext::ncurses::wborder(WINDOW *win, chtype ls, chtype rs, chtype ts,
     return ::wborder(win, ls, rs, ts, bs, tl, tr, bl, br);
 }
 
+int ext::ncurses::werase(WINDOW *win) noexcept
+{
+    return ::werase(win);
+}
+
 WINDOW *ext::ncurses::root() noexcept
 {
     return m_root;

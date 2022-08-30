@@ -58,6 +58,7 @@ public:
     virtual int w_add_str(WINDOW *, const char *) noexcept;
     virtual int wborder(WINDOW *, chtype, chtype, chtype, chtype, chtype,
                         chtype, chtype, chtype) noexcept;
+    virtual int werase(WINDOW *) noexcept;
 
 public:
     // Test utilities.
