@@ -4,6 +4,7 @@
 #include "config/config.hpp"
 #include "errors.hpp"
 #include "logging.hpp"
+#include "tui/color.hpp"
 #include "tui/pane.hpp"
 #include "tui/project.hpp"
 #include "tui/window.hpp"
@@ -87,6 +88,14 @@ public:
         if (auto rc = ncurses.noecho()) {
             m_return_code = error(ERROR_ECHO, "noecho() failed: ", rc);
             return *this;
+        }
+
+        if (ncurses.has_colors()) {
+            auto &conf = cfg::config::ref();
+            auto color = conf.get<short>("color.root_border");
+
+            ncurses.start_color();
+            ncurses.init_pair(theme::root_border, color, COLOR_BLACK);
         }
 
         m_pane->inherit();  // Update sizes relative to the root
@@ -174,8 +183,8 @@ public:
         m_pane->end();
 
         // Just destruct the root window in all cases; in the case where we
-        // error out after running initscr(), this will be able to undo what
-        // initscr() did if it can.
+        // error out after running initscr(), this will be able to undo
+        // what initscr() did if it can.
         auto rc = root->end();
 
         // Only update m_return_code if it's not already errored out.

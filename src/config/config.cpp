@@ -1,6 +1,7 @@
 #include "config.hpp"
 #include "../config.hpp"
 #include <algorithm>
+#include <fmt/format.h>
 #include <vector>
 using namespace tasker;
 namespace po = boost::program_options;
@@ -14,6 +15,7 @@ cfg::config::config() noexcept
     m_desc.add_options()("version,v", "print version string");
     m_desc.add_options()(
         "config,c", po::value<std::string>(), "custom config file path");
+    reset();
 }
 
 cfg::config &cfg::config::option(const std::string &key,
@@ -64,6 +66,9 @@ void cfg::config::reset()
 {
     m_vars.clear();
     m_config = std::make_shared<po::options_description>("Config options");
+    m_config->add_options()("color.root_border",
+                            po::value<short>()->default_value(4),
+                            "8/256 color ordinal");
 }
 
 cfg::config &cfg::config::ref(cfg::config &conf)

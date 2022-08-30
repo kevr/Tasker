@@ -105,6 +105,44 @@ int ext::ncurses::werase(WINDOW *win) noexcept
     return OK;
 }
 
+int ext::ncurses::start_color() noexcept
+{
+    return OK;
+}
+
+int ext::ncurses::init_pair(short pair, short fg, short bg) noexcept
+{
+    m_pairs[pair] = std::make_pair(fg, bg);
+    return OK;
+}
+
+int ext::ncurses::get_pair(short pair) noexcept
+{
+    if (m_pairs.find(pair) == m_pairs.end())
+        return ERR;
+    return pair;
+}
+
+int ext::ncurses::supported_colors() noexcept
+{
+    return 256;
+}
+
+bool ext::ncurses::has_colors() noexcept
+{
+    return true;
+}
+
+int ext::ncurses::wattr_enable(WINDOW *, int) noexcept
+{
+    return OK;
+}
+
+int ext::ncurses::wattr_disable(WINDOW *, int) noexcept
+{
+    return OK;
+}
+
 // Public utility functions
 const WINDOW *ext::ncurses::root() const noexcept
 {

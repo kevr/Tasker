@@ -29,3 +29,9 @@ TEST(ncurses, keypad)
     ncurses.keypad(&win, true);
     ASSERT_TRUE(ncurses.keypad(&win));
 }
+
+TEST(ncurses, get_pair_err)
+{
+    tasker::ext::ncurses ncurses;
+    ASSERT_EQ(ncurses.get_pair(1), ERR);
+}

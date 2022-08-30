@@ -57,34 +57,19 @@ TEST(config, set_ref)
 
 TEST_F(config_test, usage)
 {
-    std::string expected = PROG + " [-hvc]";
+    std::string expected = PROG + " [-hvc] [--color.root_border]";
     ASSERT_EQ(conf.usage(), expected);
 }
 
 TEST_F(config_test, config_usage)
 {
     conf.option("test", "test help");
-    std::string expected = PROG + " [-hvc] [--test]";
+    std::string expected = PROG + " [-hvc] [--color.root_border] [--test]";
     ASSERT_EQ(conf.usage(), expected);
 }
 
 TEST_F(config_test, help)
 {
-    auto output = capture_ostream(conf);
-
-    auto lines = split(output, '\n');
-    ASSERT_EQ(lines.size(), 6);
-    ASSERT_EQ(lines[0], "");
-    ASSERT_EQ(lines[1], "Program options:");
-    ASSERT_NE(lines[2].find("-h [ --help ]"), std::string::npos);
-    ASSERT_NE(lines[3].find("-v [ --version ]"), std::string::npos);
-    ASSERT_NE(lines[4].find("-c [ --config ] arg"), std::string::npos);
-    ASSERT_EQ(lines[5], "");
-}
-
-TEST_F(config_test, config_help)
-{
-    conf.option("test", "test help");
     auto output = capture_ostream(conf);
 
     auto lines = split(output, '\n');
@@ -96,8 +81,27 @@ TEST_F(config_test, config_help)
     ASSERT_NE(lines[4].find("-c [ --config ] arg"), std::string::npos);
     ASSERT_EQ(lines[5], "");
     ASSERT_EQ(lines[6], "Config options:");
-    ASSERT_NE(lines[7].find("--test"), std::string::npos);
+    ASSERT_NE(lines[7].find("--color.root_border arg"), std::string::npos);
     ASSERT_EQ(lines[8], "");
+}
+
+TEST_F(config_test, config_help)
+{
+    conf.option("test", "test help");
+    auto output = capture_ostream(conf);
+
+    auto lines = split(output, '\n');
+    ASSERT_EQ(lines.size(), 10);
+    ASSERT_EQ(lines[0], "");
+    ASSERT_EQ(lines[1], "Program options:");
+    ASSERT_NE(lines[2].find("-h [ --help ]"), std::string::npos);
+    ASSERT_NE(lines[3].find("-v [ --version ]"), std::string::npos);
+    ASSERT_NE(lines[4].find("-c [ --config ] arg"), std::string::npos);
+    ASSERT_EQ(lines[5], "");
+    ASSERT_EQ(lines[6], "Config options:");
+    ASSERT_NE(lines[7].find("--color.root_border arg"), std::string::npos);
+    ASSERT_NE(lines[8].find("--test"), std::string::npos);
+    ASSERT_EQ(lines[9], "");
 }
 
 TEST_F(config_test, getattr)

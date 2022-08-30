@@ -13,7 +13,7 @@ class WINDOW
 #define ERR -1
 #define OK 0
 
-using chtype = char;
+typedef unsigned chtype;
 
 #define ACS_VLINE '|'
 #define ACS_HLINE '_'
@@ -39,6 +39,9 @@ private:
     //! child -> parent map
     std::map<WINDOW *, WINDOW *> m_windows;
 
+    //! color pairs
+    std::map<short, std::pair<short, short>> m_pairs;
+
 public:
     virtual ~ncurses();
 
@@ -63,6 +66,18 @@ public:
                         chtype, chtype, chtype) noexcept;
     virtual int werase(WINDOW *) noexcept;
 
+    // Colors
+    virtual int start_color() noexcept;
+
+    virtual int init_pair(short, short, short) noexcept;
+    virtual int get_pair(short) noexcept;
+
+    virtual int supported_colors() noexcept;
+    virtual bool has_colors() noexcept;
+
+    virtual int wattr_enable(WINDOW *, int) noexcept;
+    virtual int wattr_disable(WINDOW *, int) noexcept;
+
 public:
     // Test utilities.
     const WINDOW *root() const noexcept;
@@ -71,5 +86,16 @@ public:
 };
 
 }; // namespace tasker::ext
+
+#define COLOR_PAIR(x) this->ncurses->get_pair(x)
+
+#define COLOR_BLACK 0
+#define COLOR_RED 1
+#define COLOR_GREEN 2
+#define COLOR_YELLOW 3
+#define COLOR_BLUE 4
+#define COLOR_MAGENTA 5
+#define COLOR_CYAN 6
+#define COLOR_WHITE 7
 
 #endif /* SRC_EXTERN_NCURSES_HPP */

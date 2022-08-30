@@ -85,6 +85,36 @@ int ext::ncurses::werase(WINDOW *win) noexcept
     return ::werase(win);
 }
 
+int ext::ncurses::start_color() noexcept
+{
+    return ::start_color();
+}
+
+int ext::ncurses::init_pair(short pair, short fg, short bg) noexcept
+{
+    return ::init_pair(pair, fg, bg);
+}
+
+int ext::ncurses::supported_colors() noexcept
+{
+    return COLORS;
+}
+
+bool ext::ncurses::has_colors() noexcept
+{
+    return ::has_colors();
+}
+
+int ext::ncurses::wattr_enable(WINDOW *win, int attrs) noexcept
+{
+    return wattron(win, attrs);
+}
+
+int ext::ncurses::wattr_disable(WINDOW *win, int attrs) noexcept
+{
+    return wattroff(win, attrs);
+}
+
 WINDOW *ext::ncurses::root() noexcept
 {
     return m_root;

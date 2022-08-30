@@ -85,6 +85,10 @@ int tasker_main(ext::ncurses &ncurses, int argc, char *argv[])
     if (!term.init())
         return term.end();
 
+    auto message =
+        fmt::format("supported colors: {0}", ncurses.supported_colors());
+    logging.info(message);
+
     // Refresh the TUI
     term.refresh();
 

@@ -4,6 +4,7 @@
 #include "../errors.hpp"
 #include "../utility.hpp"
 #include "basic_window.hpp"
+#include "tui/color.hpp"
 
 namespace tasker::tui
 {
@@ -44,18 +45,19 @@ public:
     virtual int draw() noexcept override
     {
         // Set a border on `root`.
-        if (auto rc = this->ncurses->wborder(this->handle(),
-                                             ACS_VLINE,
-                                             ACS_VLINE,
-                                             ACS_HLINE,
-                                             ACS_HLINE,
-                                             ACS_ULCORNER,
-                                             ACS_URCORNER,
-                                             ACS_LLCORNER,
-                                             ACS_LRCORNER)) {
-            return rc;
-        }
-        return OK;
+        auto pair = COLOR_PAIR(theme::root_border);
+        this->ncurses->wattr_enable(this->m_win, pair);
+        int rc = this->ncurses->wborder(this->handle(),
+                                        ACS_VLINE,
+                                        ACS_VLINE,
+                                        ACS_HLINE,
+                                        ACS_HLINE,
+                                        ACS_ULCORNER,
+                                        ACS_URCORNER,
+                                        ACS_LLCORNER,
+                                        ACS_LRCORNER);
+        this->ncurses->wattr_disable(this->m_win, pair);
+        return rc;
     }
 
     int refresh() noexcept final override

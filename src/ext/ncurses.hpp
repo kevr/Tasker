@@ -33,6 +33,15 @@ public:
                 chtype, chtype) noexcept;
     int werase(WINDOW *) noexcept;
 
+    // Color functions
+    int start_color() noexcept;
+    int init_pair(short, short, short) noexcept;
+    int supported_colors() noexcept;
+    bool has_colors() noexcept;
+
+    int wattr_enable(WINDOW *, int) noexcept;
+    int wattr_disable(WINDOW *, int) noexcept;
+
 public:
     WINDOW *root() noexcept;
 };
