@@ -35,6 +35,7 @@ public:
     virtual int keypad(WINDOW *, bool) noexcept;
     virtual int raw() noexcept;
     virtual int noecho() noexcept;
+    virtual int getchar() noexcept;
     virtual int wrefresh(WINDOW *) noexcept;
     virtual int refresh() noexcept;
     virtual int endwin() noexcept;

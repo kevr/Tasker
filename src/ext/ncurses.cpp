@@ -32,6 +32,11 @@ int ext::ncurses::noecho() noexcept
     return ::noecho();
 }
 
+int ext::ncurses::getchar() noexcept
+{
+    return getch();
+}
+
 int ext::ncurses::refresh() noexcept
 {
     return ::refresh();

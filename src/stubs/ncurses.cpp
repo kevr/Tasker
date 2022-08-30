@@ -3,6 +3,7 @@
  * All Rights Reserved.
  **/
 #include "ncurses.hpp"
+#include "config/keybinds.hpp"
 using namespace tasker;
 
 // Static member initialization
@@ -39,6 +40,11 @@ int ext::ncurses::raw() noexcept
 int ext::ncurses::noecho() noexcept
 {
     return OK;
+}
+
+int ext::ncurses::getchar() noexcept
+{
+    return cfg::default_keybinds::KEY_QUIT;
 }
 
 int ext::ncurses::wrefresh(WINDOW *) noexcept

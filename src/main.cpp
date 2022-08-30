@@ -77,7 +77,13 @@ int tasker_main(ext::ncurses &ncurses, int argc, char *argv[])
     // Refresh the TUI
     term.refresh();
 
-    // TODO: TUI input logic, wait-state until quit key
+    // TUI input logic, wait-state until quit key is pressed
+    const int key_quit = conf.get<char>("key_quit");
+    while (int ch = ncurses.getchar()) {
+        if (ch == key_quit) {
+            break;
+        }
+    }
 
     // Restore logger pointer and close any open file stream
     logger::reset();
