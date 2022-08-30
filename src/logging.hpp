@@ -18,10 +18,10 @@ public:
     static void reset();
     static void set_debug(bool enabled);
 
-    void info(const std::string &line);
-    void error(const std::string &line);
-    void warning(const std::string &line);
-    void debug(const std::string &line);
+    void info(const std::string &line) const;
+    void error(const std::string &line) const;
+    void warning(const std::string &line) const;
+    void debug(const std::string &line) const;
 };
 
 }; // namespace tasker
