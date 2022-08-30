@@ -6,6 +6,7 @@
  **/
 #include "config.hpp"
 #include "config/config.hpp"
+#include "config/keybinds.hpp"
 #include "env.hpp"
 #include "logging.hpp"
 #include "ncurses.hpp"
@@ -27,6 +28,8 @@ int tasker_main(ext::ncurses &ncurses, int argc, char *argv[])
     conf.option("logfile,l",
                 po::value<std::string>(),
                 "designate a log file instead of stderr");
+
+    cfg::add_keybind_options(conf);
 
     conf.parse_args(argc, argv);
 

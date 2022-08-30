@@ -9,6 +9,7 @@ tasker_sources = [
   'projects/project.cpp',
   'tasks/task.cpp',
   'users/user.cpp',
+  'config/keybinds.cpp',
   'config/config.cpp',
   'env.cpp',
   'utility.cpp',
