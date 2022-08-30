@@ -73,6 +73,13 @@ int ext::ncurses::w_add_str(WINDOW *win, const char *str) noexcept
     return waddstr(win, str);
 }
 
+int ext::ncurses::wborder(WINDOW *win, chtype ls, chtype rs, chtype ts,
+                          chtype bs, chtype tl, chtype tr, chtype bl,
+                          chtype br) noexcept
+{
+    return ::wborder(win, ls, rs, ts, bs, tl, tr, bl, br);
+}
+
 WINDOW *ext::ncurses::root() noexcept
 {
     return m_root;

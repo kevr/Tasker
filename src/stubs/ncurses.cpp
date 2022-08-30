@@ -94,6 +94,12 @@ int ext::ncurses::w_add_str(WINDOW *, const char *) noexcept
     return OK;
 }
 
+int ext::ncurses::wborder(WINDOW *, chtype, chtype, chtype, chtype, chtype,
+                          chtype, chtype, chtype) noexcept
+{
+    return OK;
+}
+
 // Public utility functions
 const WINDOW *ext::ncurses::root() const noexcept
 {

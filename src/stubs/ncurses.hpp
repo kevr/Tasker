@@ -13,6 +13,15 @@ class WINDOW
 #define ERR -1
 #define OK 0
 
+using chtype = char;
+
+#define ACS_VLINE '|'
+#define ACS_HLINE '_'
+#define ACS_ULCORNER '*'
+#define ACS_URCORNER '*'
+#define ACS_LLCORNER '*'
+#define ACS_LRCORNER '*'
+
 namespace tasker::ext
 {
 
@@ -47,6 +56,8 @@ public:
 
     // Window utility functions
     virtual int w_add_str(WINDOW *, const char *) noexcept;
+    virtual int wborder(WINDOW *, chtype, chtype, chtype, chtype, chtype,
+                        chtype, chtype, chtype) noexcept;
 
 public:
     // Test utilities.

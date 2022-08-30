@@ -29,6 +29,8 @@ public:
 
     // Window utility functions
     int w_add_str(WINDOW *, const char *) noexcept;
+    int wborder(WINDOW *, chtype, chtype, chtype, chtype, chtype, chtype,
+                chtype, chtype) noexcept;
 
 public:
     WINDOW *root() noexcept;
