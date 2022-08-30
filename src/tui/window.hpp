@@ -25,9 +25,6 @@ private:
     int m_x_offset { 0 };
     int m_y_offset { 0 };
 
-    // Padding
-    int m_padding { 0 };
-
     // Logging object
     logger logging;
 
@@ -46,9 +43,18 @@ public:
     window &inherit()
     {
         auto [x, y] = m_parent->dimensions();
-        this->m_x = x;
-        this->m_y = y;
+        this->m_x = x - (m_parent->padding() * 2);
+        this->m_y = y - (m_parent->padding() * 2);
         return *this;
+    }
+
+    std::tuple<int, int> dimensions() const
+    {
+        int x = this->m_x - (this->m_padding * 2);
+        int y = this->m_y - (this->m_padding * 2);
+        auto message = fmt::format("dimensions() = ({0}, {1})", x, y);
+        logging.debug(message);
+        return std::make_tuple(x, y);
     }
 
     window &offset(int x_offset, int y_offset)
@@ -63,27 +69,16 @@ public:
         return std::make_tuple(m_x_offset, m_y_offset);
     }
 
-    window &padding(int p)
-    {
-        m_padding = p;
-        return *this;
-    }
-
-    int padding() const
-    {
-        return m_padding;
-    }
-
     int init() noexcept override
     {
         if (!this->ncurses) {
             return error(ERROR, "window::ncurses was null during init()");
         }
 
-        int y = this->m_y - (m_padding * 2);
-        int x = this->m_x - (m_padding * 2);
-        int yo = m_y_offset + m_padding;
-        int xo = m_x_offset + m_padding;
+        int y = this->m_y - (this->m_padding * 2);
+        int x = this->m_x - (this->m_padding * 2);
+        int yo = m_y_offset + this->m_padding;
+        int xo = m_x_offset + this->m_padding;
 
         auto message = fmt::format("derwin({0}, {1}, {2}, {3})", y, x, yo, xo);
         logging.debug(message);

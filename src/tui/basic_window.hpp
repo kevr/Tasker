@@ -38,6 +38,9 @@ protected:
     int m_x { 0 };
     int m_y { 0 };
 
+    // Padding
+    int m_padding { 0 };
+
 public:
     basic_window() = default;
 
@@ -65,6 +68,17 @@ public:
     std::tuple<int, int> dimensions() const
     {
         return std::make_tuple(m_x, m_y);
+    }
+
+    basic_window &padding(int p)
+    {
+        m_padding = p;
+        return *this;
+    }
+
+    int padding() const
+    {
+        return m_padding;
     }
 
     // Utility functions
