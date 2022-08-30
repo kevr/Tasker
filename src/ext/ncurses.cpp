@@ -68,6 +68,11 @@ int ext::ncurses::delwin(WINDOW *win) noexcept
     return ::delwin(win);
 }
 
+int ext::ncurses::w_add_str(WINDOW *win, const char *str) noexcept
+{
+    return waddstr(win, str);
+}
+
 WINDOW *ext::ncurses::root() noexcept
 {
     return m_root;

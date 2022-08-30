@@ -1,7 +1,11 @@
 #include "../tui.hpp"
 #include "../mocks/ncurses.hpp"
+#include "config.hpp"
+#include "config/keybinds.hpp"
+#include <fmt/format.h>
 #include <gtest/gtest.h>
 using namespace tasker;
+namespace po = boost::program_options;
 
 using ::testing::_;
 using ::testing::Invoke;
@@ -29,11 +33,29 @@ void expect_pane(CI &ncurses, WINDOW *win)
     EXPECT_CALL(ncurses, delwin(_)).WillOnce(Return(OK));
 }
 
+void setup_config()
+{
+    auto &conf = cfg::config::new_ref();
+    conf.option(
+        "key_quit",
+        po::value<char>()->default_value(cfg::default_keybinds::KEY_QUIT),
+        "quit keybind");
+    const char *_argv[] = { PROG.data(), nullptr };
+    char **argv = const_cast<char **>(_argv);
+    conf.parse_args(1, argv);
+}
+
 class tui_test : public ::testing::Test
 {
 protected:
     ext::ncurses ncurses;
     tui::tui<ext::ncurses> term { ncurses };
+
+public:
+    static void SetUpTestSuite()
+    {
+        setup_config();
+    }
 };
 
 class mock_tui_test : public ::testing::Test
@@ -46,6 +68,11 @@ protected:
     tui::tui<ext::ncurses> term { ncurses };
 
 public:
+    static void SetUpTestSuite()
+    {
+        setup_config();
+    }
+
     virtual void SetUp() override
     {
         expect_root(ncurses, &mock_win);
@@ -60,12 +87,16 @@ TEST_F(tui_test, runs)
 
 TEST_F(mock_tui_test, init_twice_noop)
 {
+    EXPECT_CALL(ncurses, w_add_str(_, _)).WillOnce(Return(OK));
+
     term.init();
     ASSERT_EQ(&term.init(), &term);
 }
 
 TEST_F(mock_tui_test, end_twice_noop)
 {
+    EXPECT_CALL(ncurses, w_add_str(_, _)).WillOnce(Return(OK));
+
     // By default, if the term is not yet initialized,
     // end is a noop and just returns tui::return_code().
     ASSERT_EQ(term.end(), int());
@@ -79,6 +110,29 @@ TEST_F(mock_tui_test, end_twice_noop)
     // End again, expect the same return code since we hit
     // the noop path like we did at the beginning of this test.
     ASSERT_EQ(term.end(), rc);
+}
+
+TEST_F(mock_tui_test, w_add_str)
+{
+    std::string output;
+    EXPECT_CALL(ncurses, w_add_str(_, _))
+        .WillOnce(Invoke([&output](WINDOW *win, const char *str) -> int {
+            output = str;
+            return OK;
+        }));
+    term.init();
+    ASSERT_EQ(term.return_code(), OK);
+
+    auto expected = fmt::format("Press '{0}' to quit...",
+                                (char)cfg::default_keybinds::KEY_QUIT);
+    EXPECT_EQ(output, expected);
+}
+
+TEST_F(mock_tui_test, waddstr_fails)
+{
+    EXPECT_CALL(ncurses, w_add_str(_, _)).WillOnce(Return(ERR));
+    term.init();
+    ASSERT_EQ(term.return_code(), ERROR_WADDSTR);
 }
 
 TEST(tui, pane_init_fails)

@@ -1,9 +1,12 @@
 #ifndef SRC_TUI_HPP
 #define SRC_TUI_HPP
 
+#include "config/config.hpp"
+#include "errors.hpp"
 #include "tui/pane.hpp"
 #include "tui/window.hpp"
 #include "utility.hpp"
+#include <fmt/format.h>
 #include <stdexcept>
 #include <tuple>
 
@@ -65,22 +68,31 @@ public:
         }
 
         if (auto rc = ncurses.keypad(root->handle(), true)) {
-            m_return_code = error(2, "keypad(...) failed: ", rc);
+            m_return_code = error(ERROR_KEYPAD, "keypad(...) failed: ", rc);
             return *this;
         }
 
         if (auto rc = ncurses.raw()) {
-            m_return_code = error(3, "raw() failed: ", rc);
+            m_return_code = error(ERROR_RAW, "raw() failed: ", rc);
             return *this;
         }
 
         if (auto rc = ncurses.noecho()) {
-            m_return_code = error(4, "noecho() failed: ", rc);
+            m_return_code = error(ERROR_ECHO, "noecho() failed: ", rc);
             return *this;
         }
 
         if (auto rc = m_pane->init()) {
             m_return_code = error(rc, "m_pane->init() failed: ", rc);
+            return *this;
+        }
+
+        auto &conf = cfg::config::ref();
+        auto key_quit = conf.get<char>("key_quit");
+
+        auto message = fmt::format("Press '{0}' to quit...", key_quit);
+        if (auto rc = ncurses.w_add_str(m_pane->handle(), message.c_str())) {
+            m_return_code = error(ERROR_WADDSTR, "waddstr() failed: ", rc);
             return *this;
         }
 

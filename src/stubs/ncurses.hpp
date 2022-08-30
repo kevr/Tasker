@@ -45,6 +45,9 @@ public:
     virtual void get_max_yx(WINDOW *, int &, int &) noexcept;
     virtual int delwin(WINDOW *) noexcept;
 
+    // Window utility functions
+    virtual int w_add_str(WINDOW *, const char *) noexcept;
+
 public:
     // Test utilities.
     const WINDOW *root() const noexcept;

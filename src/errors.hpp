@@ -12,6 +12,7 @@ enum tasker_error : int {
     ERROR_ECHO = 4,
     ERROR_SUBWIN = 5,
     ERROR_GETMAXYX = 6,
+    ERROR_WADDSTR = 7,
 };
 
 #endif /* SRC_ERRORS_HPP */

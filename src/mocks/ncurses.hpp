@@ -22,6 +22,8 @@ public:
     MOCK_METHOD(WINDOW *, subwin, (WINDOW *, int, int, int, int),
                 (noexcept, override));
     MOCK_METHOD(int, delwin, (WINDOW *), (noexcept, override));
+    MOCK_METHOD(int, w_add_str, (WINDOW *, const char *),
+                (noexcept, override));
 };
 
 }; // namespace tasker::ext

@@ -27,6 +27,9 @@ public:
     void get_max_yx(WINDOW *, int &, int &) noexcept;
     int delwin(WINDOW *) noexcept;
 
+    // Window utility functions
+    int w_add_str(WINDOW *, const char *) noexcept;
+
 public:
     WINDOW *root() noexcept;
 };
