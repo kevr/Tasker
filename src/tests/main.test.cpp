@@ -147,7 +147,7 @@ TEST_F(main_test, runs)
     auto argv = const_cast<char **>(_argv);
 
     auto rc = main_real(1, argv);
-    ASSERT_EQ(rc, SUCCESS);
+    ASSERT_EQ(rc, OK);
 }
 
 TEST_F(main_test, help)
@@ -158,7 +158,7 @@ TEST_F(main_test, help)
     auto argv = const_cast<char **>(_argv);
 
     auto rc = main_real(2, argv);
-    ASSERT_EQ(rc, SUCCESS);
+    ASSERT_EQ(rc, OK);
 
     auto output = testing::internal::GetCapturedStdout();
     auto lines = split(output, '\n');
@@ -180,7 +180,7 @@ TEST_F(main_test, version)
     auto argv = const_cast<char **>(_argv);
 
     auto rc = main_real(2, argv);
-    ASSERT_EQ(rc, SUCCESS);
+    ASSERT_EQ(rc, OK);
 
     auto output = strip(testing::internal::GetCapturedStdout(), '\n');
     ASSERT_EQ(output, VERSION);
@@ -199,7 +199,7 @@ TEST_F(main_test, custom_config)
     int argc = 3;
 
     auto rc = main_real(argc, argv);
-    ASSERT_EQ(rc, SUCCESS);
+    ASSERT_EQ(rc, OK);
 }
 
 TEST_F(main_test, custom_config_unknown_option)

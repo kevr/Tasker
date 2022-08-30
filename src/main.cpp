@@ -39,12 +39,12 @@ int tasker_main(ext::ncurses &ncurses, int argc, char *argv[])
     if (conf.exists("help")) {
         std::cout << "usage: " << conf.usage() << std::endl
                   << conf << std::endl;
-        return SUCCESS;
+        return OK;
     }
 
     if (conf.exists("version")) {
         std::cout << VERSION << std::endl;
-        return SUCCESS;
+        return OK;
     }
 
     std::optional<std::filesystem::path> path;

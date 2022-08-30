@@ -77,7 +77,7 @@ public:
     int init() noexcept override
     {
         if (!this->ncurses) {
-            return error(ERROR, "window::ncurses was null during init()");
+            return error(ERR, "window::ncurses was null during init()");
         }
 
         int y = this->m_y - (this->m_padding * 2);

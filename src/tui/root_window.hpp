@@ -24,7 +24,7 @@ public:
     int init() noexcept final override
     {
         if (!this->ncurses) {
-            return error(ERROR, "root_window::ncurses was null during init()");
+            return error(ERR, "root_window::ncurses was null during init()");
         }
 
         this->m_win = this->ncurses->initscr();

@@ -4,8 +4,8 @@
 #include "ncurses.hpp"
 
 enum tasker_error : int {
-    ERROR = ERR,
-    SUCCESS = OK,
+    // ERR is accessible via ncurses
+    // OK is accessible via ncurses
     ERROR_INITSCR = 1,
     ERROR_KEYPAD = 2,
     ERROR_RAW = 3,
