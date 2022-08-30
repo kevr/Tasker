@@ -14,7 +14,7 @@ struct project_data {
 
 class project
 {
-private:
+protected:
     project_data m_data;
 
 public:

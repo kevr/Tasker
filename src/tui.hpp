@@ -4,6 +4,7 @@
 #include "config/config.hpp"
 #include "errors.hpp"
 #include "tui/pane.hpp"
+#include "tui/project.hpp"
 #include "tui/window.hpp"
 #include "utility.hpp"
 #include <fmt/format.h>
@@ -29,7 +30,9 @@ private:
     CI &ncurses;
 
     std::shared_ptr<root_window<CI>> root;
+
     std::shared_ptr<pane<CI>> m_pane;
+    std::shared_ptr<project<CI>> m_project;
 
     // `tui` state
     int m_return_code = 0;
@@ -41,6 +44,7 @@ public:
         : ncurses(ncurses)
         , root(std::make_shared<root_window<CI>>(ncurses))
         , m_pane(std::make_shared<pane<CI>>(ncurses, root))
+        , m_project(std::make_shared<project<CI>>(ncurses, m_pane))
     {
     }
 
@@ -100,11 +104,18 @@ public:
             return *this;
         }
 
+        m_project->inherit();
+        if (auto rc = m_project->init()) {
+            m_return_code = error(rc, "m_project->init() failed: ", rc);
+            return *this;
+        }
+
         auto &conf = cfg::config::ref();
         auto key_quit = conf.get<char>("key_quit");
 
         auto message = fmt::format("Press '{0}' to quit...", key_quit);
-        if (auto rc = ncurses.w_add_str(m_pane->handle(), message.c_str())) {
+        if (auto rc =
+                ncurses.w_add_str(m_project->handle(), message.c_str())) {
             m_return_code = error(ERROR_WADDSTR, "waddstr() failed: ", rc);
             return *this;
         }

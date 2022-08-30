@@ -135,6 +135,16 @@ TEST_F(mock_tui_test, waddstr_fails)
     ASSERT_EQ(term.return_code(), ERROR_WADDSTR);
 }
 
+TEST_F(mock_tui_test, project_init_fails)
+{
+    EXPECT_CALL(ncurses, derwin(_, _, _, _, _))
+        .Times(2)
+        .WillOnce(Return(&mock_pane))
+        .WillOnce(Return(nullptr));
+    term.init();
+    ASSERT_EQ(term.return_code(), ERROR_DERWIN);
+}
+
 TEST(tui, pane_init_fails)
 {
     WINDOW win_root;
