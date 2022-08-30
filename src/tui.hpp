@@ -82,6 +82,17 @@ public:
             return *this;
         }
 
+        // Set a border on `root`.
+        ncurses.wborder(root->handle(),
+                        ACS_VLINE,
+                        ACS_VLINE,
+                        ACS_HLINE,
+                        ACS_HLINE,
+                        ACS_ULCORNER,
+                        ACS_URCORNER,
+                        ACS_LLCORNER,
+                        ACS_LRCORNER);
+
         m_pane->inherit();  // Update sizes relative to the root
         m_pane->padding(1); // Set a padding of 1
         if (auto rc = m_pane->init()) {
