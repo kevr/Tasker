@@ -3,6 +3,7 @@
 
 #include "config/config.hpp"
 #include "errors.hpp"
+#include "logging.hpp"
 #include "tui/pane.hpp"
 #include "tui/project.hpp"
 #include "tui/window.hpp"
@@ -38,6 +39,8 @@ private:
     int m_return_code = 0;
     bool m_created = false;
     bool m_ended = true;
+
+    logger logging;
 
 public:
     tui(CI &ncurses) noexcept
@@ -86,17 +89,6 @@ public:
             return *this;
         }
 
-        // Set a border on `root`.
-        ncurses.wborder(root->handle(),
-                        ACS_VLINE,
-                        ACS_VLINE,
-                        ACS_HLINE,
-                        ACS_HLINE,
-                        ACS_ULCORNER,
-                        ACS_URCORNER,
-                        ACS_LLCORNER,
-                        ACS_LRCORNER);
-
         m_pane->inherit();  // Update sizes relative to the root
         m_pane->padding(1); // Set a padding of 1
         if (auto rc = m_pane->init()) {
@@ -110,17 +102,40 @@ public:
             return *this;
         }
 
+        if (auto rc = draw()) {
+            m_return_code = error(rc, "tui::init()'s draw() failed: ", rc);
+            return *this;
+        }
+
+        return *this;
+    }
+
+    void resize() noexcept
+    {
+        this->ncurses.werase(root->handle());
+        end();
+        root->refresh();
+        init();
+    }
+
+    int draw() noexcept
+    {
+        if (auto rc = root->draw()) {
+            return error(rc, "root->draw() failed: ", rc);
+        }
+
+        m_pane->draw();
+
         auto &conf = cfg::config::ref();
         auto key_quit = conf.get<char>("key_quit");
 
         auto message = fmt::format("Press '{0}' to quit...", key_quit);
         if (auto rc =
                 ncurses.w_add_str(m_project->handle(), message.c_str())) {
-            m_return_code = error(ERROR_WADDSTR, "waddstr() failed: ", rc);
-            return *this;
+            return error(ERROR_WADDSTR, "waddstr() failed: ", rc);
         }
 
-        return *this;
+        return OK;
     }
 
     int refresh() noexcept

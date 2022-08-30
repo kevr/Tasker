@@ -1,3 +1,4 @@
+#include "config/keybinds.hpp"
 #include <gtest/internal/gtest-port.h>
 #define main main_real
 #include "main.cpp"
@@ -259,4 +260,40 @@ TEST_F(main_test, enable_debug_logging)
     }
 
     ASSERT_NE(content.find("[DEBUG]"), std::string::npos);
+}
+
+TEST_F(main_test, resize)
+{
+    ext::mock_ncurses ncurses;
+
+    WINDOW win;
+    EXPECT_CALL(ncurses, initscr()).WillRepeatedly(Return(&win));
+    EXPECT_CALL(ncurses, get_max_yx(_, _, _))
+        .WillRepeatedly(Invoke([](WINDOW *win, int &y, int &x) {
+            x = 800;
+            y = 600;
+        }));
+    EXPECT_CALL(ncurses, keypad(_, _)).WillRepeatedly(Return(OK));
+    EXPECT_CALL(ncurses, raw()).WillRepeatedly(Return(OK));
+    EXPECT_CALL(ncurses, noecho()).WillRepeatedly(Return(OK));
+    EXPECT_CALL(ncurses, endwin()).WillRepeatedly(Return(OK));
+
+    WINDOW child;
+    EXPECT_CALL(ncurses, derwin(_, _, _, _, _))
+        .Times(4)
+        .WillRepeatedly(Return(&child));
+    EXPECT_CALL(ncurses, delwin(_)).WillRepeatedly(Return(OK));
+
+    EXPECT_CALL(ncurses, refresh()).WillRepeatedly(Return(OK));
+    EXPECT_CALL(ncurses, wrefresh(_)).WillRepeatedly(Return(OK));
+    EXPECT_CALL(ncurses, w_add_str(_, _)).WillRepeatedly(Return(OK));
+
+    EXPECT_CALL(ncurses, getchar())
+        .Times(2)
+        .WillOnce(Return(KEY_RESIZE))
+        .WillOnce(Return(cfg::default_keybinds::KEY_QUIT));
+
+    const char *_argv[] = { PROG.data(), nullptr };
+    char **argv = const_cast<char **>(_argv);
+    ASSERT_EQ(tasker_main(ncurses, 1, argv), OK);
 }

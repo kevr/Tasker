@@ -17,6 +17,11 @@ private:
 public:
     using window<CI>::window;
 
+    virtual int draw() noexcept override
+    {
+        return OK;
+    }
+
     int id(int id)
     {
         this->m_project.id = id;

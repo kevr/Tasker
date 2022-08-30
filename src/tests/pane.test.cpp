@@ -37,7 +37,7 @@ public:
                 y = 600;
             }));
         EXPECT_CALL(ncurses, derwin(_, _, _, _, _))
-            .WillOnce(Return(&win_pane));
+            .WillRepeatedly(Return(&win_pane));
         EXPECT_CALL(ncurses, delwin(_)).WillRepeatedly(Return(OK));
 
         root = std::make_shared<root_window_t>(ncurses);

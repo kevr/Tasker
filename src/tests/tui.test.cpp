@@ -31,6 +31,9 @@ void expect_pane(CI &ncurses, WINDOW *win)
 {
     EXPECT_CALL(ncurses, derwin(_, _, _, _, _)).WillRepeatedly(Return(win));
     EXPECT_CALL(ncurses, delwin(_)).WillOnce(Return(OK));
+    EXPECT_CALL(ncurses, w_add_str(_, _)).WillRepeatedly(Return(OK));
+    EXPECT_CALL(ncurses, wborder(_, _, _, _, _, _, _, _, _))
+        .WillRepeatedly(Return(OK));
 }
 
 void setup_config()
@@ -143,6 +146,16 @@ TEST_F(mock_tui_test, project_init_fails)
         .WillOnce(Return(nullptr));
     term.init();
     ASSERT_EQ(term.return_code(), ERROR_DERWIN);
+}
+
+TEST_F(mock_tui_test, root_draw_fails)
+{
+    term.init();
+
+    EXPECT_CALL(ncurses, wborder(_, _, _, _, _, _, _, _, _))
+        .Times(1)
+        .WillOnce(Return(ERR));
+    ASSERT_EQ(term.draw(), ERR);
 }
 
 TEST(tui, pane_init_fails)

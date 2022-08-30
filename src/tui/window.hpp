@@ -69,6 +69,11 @@ public:
         return std::make_tuple(m_x_offset, m_y_offset);
     }
 
+    virtual int draw() noexcept override
+    {
+        return ERROR_NOIMPL;
+    }
+
     int init() noexcept override
     {
         if (!this->ncurses) {

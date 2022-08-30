@@ -91,6 +91,12 @@ int tasker_main(ext::ncurses &ncurses, int argc, char *argv[])
     tasker::context<int> ctx;
     ctx.bind_keys(ctx, conf);
 
+    auto resize = [&term]() {
+        term.resize();
+        term.refresh();
+    };
+    ctx.keybinds[KEY_RESIZE] = resize;
+
     // TUI input logic, wait-state until quit key is pressed
     int ch;
     while (ctx && (ch = ncurses.getchar())) {

@@ -18,6 +18,12 @@ public:
     //! init() interface which must be overridden in derivatives
     virtual int init() noexcept = 0;
 
+    //! resize() interface which should be overridden in derivatives
+    virtual void resize() noexcept = 0;
+
+    //! void() interface which must be overridden in derivatives
+    virtual int draw() noexcept = 0;
+
     //! refresh() interface which must be overridden in derivatives
     virtual int refresh() noexcept = 0;
 

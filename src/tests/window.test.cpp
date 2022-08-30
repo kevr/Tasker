@@ -95,6 +95,23 @@ TEST_F(window_test, stub_raii)
     ASSERT_EQ(ncurses.windows().size(), 1);
 }
 
+TEST_F(window_test, resize)
+{
+    using window_t = tui::window<ext::ncurses>;
+    auto window = std::make_shared<window_t>(ncurses, root);
+    ASSERT_EQ(window->init(), OK);
+
+    // Falls through to basic_window<CI>::resize(), which is a no-op
+    window->resize();
+}
+
+TEST_F(window_test, draw)
+{
+    using window_t = tui::window<ext::ncurses>;
+    auto window = std::make_shared<window_t>(ncurses, root);
+    ASSERT_EQ(window->draw(), ERROR_NOIMPL);
+}
+
 TEST_F(mock_window_test, subwin_fails)
 {
     using window_t = tui::window<ext::ncurses>;

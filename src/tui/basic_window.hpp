@@ -92,6 +92,11 @@ public:
         return m_win;
     }
 
+    virtual void resize() noexcept override
+    {
+        // no-op symbol definition for concrete class
+    }
+
     int refresh_all() noexcept
     {
         if (auto rc = refresh())

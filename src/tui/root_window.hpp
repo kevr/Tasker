@@ -41,11 +41,28 @@ public:
         return OK;
     }
 
+    virtual int draw() noexcept override
+    {
+        // Set a border on `root`.
+        if (auto rc = this->ncurses->wborder(this->handle(),
+                                             ACS_VLINE,
+                                             ACS_VLINE,
+                                             ACS_HLINE,
+                                             ACS_HLINE,
+                                             ACS_ULCORNER,
+                                             ACS_URCORNER,
+                                             ACS_LLCORNER,
+                                             ACS_LRCORNER)) {
+            return rc;
+        }
+        return OK;
+    }
+
     int refresh() noexcept final override
     {
-        if (!*this) {
-            return error(ERR,
-                         "root_window::refresh() called on a null handle");
+        if (!this->ncurses) {
+            return error(
+                ERR, "root_window::refresh() called on a null ncurses handle");
         }
 
         return this->ncurses->refresh();

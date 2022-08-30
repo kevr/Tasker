@@ -22,6 +22,9 @@ using chtype = char;
 #define ACS_LLCORNER '*'
 #define ACS_LRCORNER '*'
 
+// KEY_RESIZE value used in ncurses.h on a Linux x86_64 system
+#define KEY_RESIZE 410
+
 namespace tasker::ext
 {
 

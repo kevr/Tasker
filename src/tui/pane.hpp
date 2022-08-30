@@ -39,6 +39,15 @@ public:
         m_i = i;
     }
 
+    virtual int draw() noexcept override
+    {
+        // Draw focused child.
+        if (this->m_children.size()) {
+            this->m_children[m_i]->draw();
+        }
+        return OK;
+    }
+
     int refresh() noexcept final override
     {
         if (auto rc = window<CI>::refresh()) {
