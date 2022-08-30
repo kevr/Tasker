@@ -2,6 +2,7 @@
 #define SRC_CONFIG_KEYBINDS_HPP
 
 #include "config.hpp"
+#include "context.hpp"
 
 namespace tasker::cfg
 {

@@ -4,9 +4,11 @@
  * Copyright (C) 2022 Kevin Morris <kevr@0cost.org>
  * All Rights Reserved.
  **/
+#include "callback.hpp"
 #include "config.hpp"
 #include "config/config.hpp"
 #include "config/keybinds.hpp"
+#include "context.hpp"
 #include "env.hpp"
 #include "logging.hpp"
 #include "ncurses.hpp"
@@ -77,11 +79,14 @@ int tasker_main(ext::ncurses &ncurses, int argc, char *argv[])
     // Refresh the TUI
     term.refresh();
 
+    tasker::context<int> ctx;
+    ctx.bind_keys(ctx, conf);
+
     // TUI input logic, wait-state until quit key is pressed
-    const int key_quit = conf.get<char>("key_quit");
-    while (int ch = ncurses.getchar()) {
-        if (ch == key_quit) {
-            break;
+    int ch;
+    while (ctx && (ch = ncurses.getchar())) {
+        if (ctx.keybind_exists(ch)) {
+            ctx.call_keybind(ch);
         }
     }
 
