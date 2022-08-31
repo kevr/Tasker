@@ -97,6 +97,11 @@ public:
         // no-op symbol definition for concrete class
     }
 
+    int erase() noexcept
+    {
+        return this->ncurses->werase(this->handle());
+    }
+
     int refresh_all() noexcept
     {
         if (auto rc = refresh())

@@ -30,3 +30,9 @@
 [color]
 # By default, the root_border is blue (4).
 #root_border = 4
+
+# Project status bar foreground
+#project_bar_fg = 0
+
+# Project status bar background
+#project_bar_bg = 4

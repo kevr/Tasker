@@ -57,14 +57,18 @@ TEST(config, set_ref)
 
 TEST_F(config_test, usage)
 {
-    std::string expected = PROG + " [-hvc] [--color.root_border]";
+    std::string expected =
+        PROG + (" [-hvc] [--color.root_border] [--color.project_bar_bg] "
+                "[--color.project_bar_fg]");
     ASSERT_EQ(conf.usage(), expected);
 }
 
 TEST_F(config_test, config_usage)
 {
     conf.option("test", "test help");
-    std::string expected = PROG + " [-hvc] [--color.root_border] [--test]";
+    std::string expected =
+        PROG + (" [-hvc] [--color.root_border] [--color.project_bar_bg] "
+                "[--color.project_bar_fg] [--test]");
     ASSERT_EQ(conf.usage(), expected);
 }
 
@@ -73,7 +77,7 @@ TEST_F(config_test, help)
     auto output = capture_ostream(conf);
 
     auto lines = split(output, '\n');
-    ASSERT_EQ(lines.size(), 9);
+    ASSERT_EQ(lines.size(), 11);
     ASSERT_EQ(lines[0], "");
     ASSERT_EQ(lines[1], "Program options:");
     ASSERT_NE(lines[2].find("-h [ --help ]"), std::string::npos);
@@ -82,7 +86,9 @@ TEST_F(config_test, help)
     ASSERT_EQ(lines[5], "");
     ASSERT_EQ(lines[6], "Config options:");
     ASSERT_NE(lines[7].find("--color.root_border arg"), std::string::npos);
-    ASSERT_EQ(lines[8], "");
+    ASSERT_NE(lines[8].find("--color.project_bar_bg arg"), std::string::npos);
+    ASSERT_NE(lines[9].find("--color.project_bar_fg arg"), std::string::npos);
+    ASSERT_EQ(lines[10], "");
 }
 
 TEST_F(config_test, config_help)
@@ -91,7 +97,7 @@ TEST_F(config_test, config_help)
     auto output = capture_ostream(conf);
 
     auto lines = split(output, '\n');
-    ASSERT_EQ(lines.size(), 10);
+    ASSERT_EQ(lines.size(), 12);
     ASSERT_EQ(lines[0], "");
     ASSERT_EQ(lines[1], "Program options:");
     ASSERT_NE(lines[2].find("-h [ --help ]"), std::string::npos);
@@ -100,8 +106,10 @@ TEST_F(config_test, config_help)
     ASSERT_EQ(lines[5], "");
     ASSERT_EQ(lines[6], "Config options:");
     ASSERT_NE(lines[7].find("--color.root_border arg"), std::string::npos);
-    ASSERT_NE(lines[8].find("--test"), std::string::npos);
-    ASSERT_EQ(lines[9], "");
+    ASSERT_NE(lines[8].find("--color.project_bar_bg arg"), std::string::npos);
+    ASSERT_NE(lines[9].find("--color.project_bar_fg arg"), std::string::npos);
+    ASSERT_NE(lines[10].find("--test"), std::string::npos);
+    ASSERT_EQ(lines[11], "");
 }
 
 TEST_F(config_test, getattr)

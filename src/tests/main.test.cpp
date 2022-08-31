@@ -279,9 +279,7 @@ TEST_F(main_test, resize)
     EXPECT_CALL(ncurses, endwin()).WillRepeatedly(Return(OK));
 
     WINDOW child;
-    EXPECT_CALL(ncurses, derwin(_, _, _, _, _))
-        .Times(4)
-        .WillRepeatedly(Return(&child));
+    EXPECT_CALL(ncurses, derwin(_, _, _, _, _)).WillRepeatedly(Return(&child));
     EXPECT_CALL(ncurses, delwin(_)).WillRepeatedly(Return(OK));
 
     EXPECT_CALL(ncurses, refresh()).WillRepeatedly(Return(OK));

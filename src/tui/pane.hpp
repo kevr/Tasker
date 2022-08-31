@@ -15,10 +15,18 @@ class pane : public window<CI>
 private:
     size_t m_i = 0;
 
+    logger logging;
+
 public:
     using window<CI>::window;
 
     ~pane() = default;
+
+    virtual int init() noexcept override
+    {
+        logging.info("pane::init()");
+        return window<CI>::init();
+    }
 
     void focus(size_t i)
     {
@@ -43,13 +51,17 @@ public:
     {
         // Draw focused child.
         if (this->m_children.size()) {
-            this->m_children[m_i]->draw();
+            if (auto rc = this->m_children[m_i]->draw()) {
+                return rc;
+            }
         }
         return OK;
     }
 
     int refresh() noexcept final override
     {
+        logging.debug("pane::refresh()");
+
         if (auto rc = window<CI>::refresh()) {
             return rc;
         }

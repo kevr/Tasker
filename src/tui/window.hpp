@@ -19,8 +19,10 @@ private:
     template <typename T>
     using basic_window_ptr = std::shared_ptr<basic_window<T>>;
 
+protected:
     basic_window_ptr<CI> m_parent;
 
+private:
     // Offsets
     int m_x_offset { 0 };
     int m_y_offset { 0 };

@@ -69,6 +69,12 @@ void cfg::config::reset()
     m_config->add_options()("color.root_border",
                             po::value<short>()->default_value(4),
                             "8/256 color ordinal");
+    m_config->add_options()("color.project_bar_bg",
+                            po::value<short>()->default_value(4),
+                            "8/256 color ordinal");
+    m_config->add_options()("color.project_bar_fg",
+                            po::value<short>()->default_value(0),
+                            "8/256 color ordinal");
 }
 
 cfg::config &cfg::config::ref(cfg::config &conf)

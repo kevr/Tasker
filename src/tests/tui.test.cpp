@@ -90,16 +90,12 @@ TEST_F(tui_test, runs)
 
 TEST_F(mock_tui_test, init_twice_noop)
 {
-    EXPECT_CALL(ncurses, w_add_str(_, _)).WillOnce(Return(OK));
-
     term.init();
     ASSERT_EQ(&term.init(), &term);
 }
 
 TEST_F(mock_tui_test, end_twice_noop)
 {
-    EXPECT_CALL(ncurses, w_add_str(_, _)).WillOnce(Return(OK));
-
     // By default, if the term is not yet initialized,
     // end is a noop and just returns tui::return_code().
     ASSERT_EQ(term.end(), int());
@@ -119,6 +115,8 @@ TEST_F(mock_tui_test, w_add_str)
 {
     std::string output;
     EXPECT_CALL(ncurses, w_add_str(_, _))
+        .Times(2)
+        .WillOnce(Return(OK))
         .WillOnce(Invoke([&output](WINDOW *win, const char *str) -> int {
             output = str;
             return OK;
@@ -133,7 +131,7 @@ TEST_F(mock_tui_test, w_add_str)
 
 TEST_F(mock_tui_test, waddstr_fails)
 {
-    EXPECT_CALL(ncurses, w_add_str(_, _)).WillOnce(Return(ERR));
+    EXPECT_CALL(ncurses, w_add_str(_, _)).WillRepeatedly(Return(ERR));
     term.init();
     ASSERT_EQ(term.return_code(), ERROR_WADDSTR);
 }
@@ -141,7 +139,27 @@ TEST_F(mock_tui_test, waddstr_fails)
 TEST_F(mock_tui_test, project_init_fails)
 {
     EXPECT_CALL(ncurses, derwin(_, _, _, _, _))
-        .Times(2)
+        .WillOnce(Return(&mock_pane))
+        .WillOnce(Return(nullptr));
+    term.init();
+    ASSERT_EQ(term.return_code(), ERROR_DERWIN);
+}
+
+TEST_F(mock_tui_test, bar_init_fails)
+{
+    EXPECT_CALL(ncurses, derwin(_, _, _, _, _))
+        .WillOnce(Return(&mock_pane))
+        .WillOnce(Return(&mock_pane))
+        .WillOnce(Return(nullptr));
+    term.init();
+    ASSERT_EQ(term.return_code(), ERROR_DERWIN);
+}
+
+TEST_F(mock_tui_test, content_init_fails)
+{
+    EXPECT_CALL(ncurses, derwin(_, _, _, _, _))
+        .WillOnce(Return(&mock_pane))
+        .WillOnce(Return(&mock_pane))
         .WillOnce(Return(&mock_pane))
         .WillOnce(Return(nullptr));
     term.init();

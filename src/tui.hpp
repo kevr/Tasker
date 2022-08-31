@@ -92,10 +92,14 @@ public:
 
         if (ncurses.has_colors()) {
             auto &conf = cfg::config::ref();
-            auto color = conf.get<short>("color.root_border");
-
             ncurses.start_color();
+
+            auto color = conf.get<short>("color.root_border");
             ncurses.init_pair(theme::root_border, color, COLOR_BLACK);
+
+            auto color_bg = conf.get<short>("color.project_bar_bg");
+            auto color_fg = conf.get<short>("color.project_bar_fg");
+            ncurses.init_pair(theme::project_bar, color_fg, color_bg);
         }
 
         m_pane->inherit();  // Update sizes relative to the root
@@ -121,10 +125,11 @@ public:
 
     void resize() noexcept
     {
-        this->ncurses.werase(root->handle());
+        root->erase();
         end();
         root->refresh();
         init();
+        root->refresh_all();
     }
 
     int draw() noexcept
@@ -133,15 +138,8 @@ public:
             return error(rc, "root->draw() failed: ", rc);
         }
 
-        m_pane->draw();
-
-        auto &conf = cfg::config::ref();
-        auto key_quit = conf.get<char>("key_quit");
-
-        auto message = fmt::format("Press '{0}' to quit...", key_quit);
-        if (auto rc =
-                ncurses.w_add_str(m_project->handle(), message.c_str())) {
-            return error(ERROR_WADDSTR, "waddstr() failed: ", rc);
+        if (auto rc = m_pane->draw()) {
+            return rc;
         }
 
         return OK;

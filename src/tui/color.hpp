@@ -6,6 +6,7 @@ namespace tasker::tui
 
 enum theme : short {
     root_border = 1,
+    project_bar = 2,
 };
 
 }; // namespace tasker::tui
