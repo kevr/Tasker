@@ -34,9 +34,11 @@ jobs:
 
       - name: Checkout Repository
         uses: actions/checkout@v3
+        with:
+          fetch-depth: '0'
 
       - name: Configure Meson
-        run: meson -Db_coverage=true -Dbuild_bin=false -Dbuild_tests=true build
+        run: meson -Dversion="$(git describe)" -Db_coverage=true -Dbuild_bin=false build
 
       - name: Build Project
         run: ninja -C build -j2
