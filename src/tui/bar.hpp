@@ -39,6 +39,8 @@ public:
 
     virtual int draw() noexcept override
     {
+        logging.debug(LOGTRACE());
+
         auto color = COLOR_PAIR(theme::project_bar);
         this->ncurses->wattr_enable(this->handle(), color);
         auto [x, _] = this->dimensions();

@@ -30,6 +30,8 @@ public:
 
     void focus(size_t i)
     {
+        logging.debug(LOGTRACE());
+
         auto size = this->m_children.size();
         auto n = size - 1;
         if (!size) {
@@ -49,6 +51,8 @@ public:
 
     virtual int draw() noexcept override
     {
+        logging.debug(LOGTRACE());
+
         // Draw focused child.
         if (this->m_children.size()) {
             if (auto rc = this->m_children[m_i]->draw()) {

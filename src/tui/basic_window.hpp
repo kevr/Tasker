@@ -2,6 +2,7 @@
 #define SRC_TUI_BASIC_WINDOW_HPP
 
 #include "../ncurses.hpp"
+#include "logging.hpp"
 #include "object.hpp"
 #include <algorithm>
 #include <memory>
@@ -46,6 +47,8 @@ protected:
         int left = 0;
     } m_padding;
 
+    logger logging;
+
 public:
     basic_window() = default;
 
@@ -65,6 +68,8 @@ public:
 
     basic_window &set_dimensions(int x, int y)
     {
+        auto str = fmt::format("set_dimensions({0}, {1})", x, y);
+        logging.debug(LOG(str));
         m_x = x;
         m_y = y;
         return *this;
@@ -72,11 +77,16 @@ public:
 
     std::tuple<int, int> dimensions() const
     {
+        auto str = fmt::format("dimensions() -> ({0}, {1})", m_x, m_y);
+        logging.debug(LOG(str));
         return std::make_tuple(m_x, m_y);
     }
 
     basic_window &padding(int left, int top, int right, int bottom)
     {
+        auto str = fmt::format(
+            "padding({0}, {1}, {2}, {3})", left, top, right, bottom);
+        logging.debug(LOG(str));
         m_padding.left = left;
         m_padding.top = top;
         m_padding.right = right;
@@ -86,6 +96,12 @@ public:
 
     const padding_t &padding() const
     {
+        auto str = fmt::format("padding() -> ({0}, {1}, {2}, {3})",
+                               m_padding.left,
+                               m_padding.top,
+                               m_padding.right,
+                               m_padding.bottom);
+        logging.debug(LOG(str));
         return m_padding;
     }
 
@@ -107,11 +123,13 @@ public:
 
     int erase() noexcept
     {
+        logging.debug(LOGTRACE());
         return this->ncurses->werase(this->handle());
     }
 
     int refresh_all() noexcept
     {
+        logging.debug(LOGTRACE());
         if (auto rc = refresh())
             return rc;
 
@@ -126,11 +144,13 @@ public:
 
     void add_child(basic_window_ptr window)
     {
+        logging.debug(LOGTRACE());
         m_children.emplace_back(std::move(window));
     }
 
     void remove_child(basic_window_ptr window)
     {
+        logging.debug(LOGTRACE());
         auto it = std::find(m_children.begin(), m_children.end(), window);
         m_children.erase(it);
     }

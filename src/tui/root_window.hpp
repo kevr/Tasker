@@ -32,6 +32,7 @@ public:
             return error(ERR, LOG("ncurses was null during init()"));
         }
 
+        logging.debug(LOG("initscr()"));
         this->m_win = this->ncurses->initscr();
         if (this->m_win == nullptr) {
             return error(ERROR_INITSCR, LOG("initscr() returned a nullptr"));
@@ -49,6 +50,8 @@ public:
 
     virtual int draw() noexcept override
     {
+        logging.debug(LOGTRACE());
+
         // Set a border on `root`.
         auto pair = COLOR_PAIR(theme::root_border);
         this->ncurses->wattr_enable(this->m_win, pair);

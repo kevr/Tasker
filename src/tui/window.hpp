@@ -71,6 +71,8 @@ public:
 
     virtual int draw() noexcept override
     {
+        auto str = "draw() -> ERROR_NOIMPL";
+        logging.debug(LOG(str));
         return ERROR_NOIMPL;
     }
 

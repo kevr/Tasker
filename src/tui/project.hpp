@@ -66,6 +66,8 @@ public:
 
     virtual int draw() noexcept override
     {
+        logging.debug(LOGTRACE());
+
         m_bar->draw();
         auto &conf = cfg::config::ref();
         auto key_quit = conf.get<char>("key_quit");
@@ -80,6 +82,8 @@ public:
 
     virtual int refresh() noexcept override
     {
+        logging.debug(LOGTRACE());
+
         m_bar->refresh();
         m_content->refresh();
         return OK;
