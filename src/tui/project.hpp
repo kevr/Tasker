@@ -64,7 +64,8 @@ public:
         auto message = fmt::format("Press '{0}' to quit...", key_quit);
         if (auto rc = this->ncurses->w_add_str(m_content->handle(),
                                                message.c_str())) {
-            return error(ERROR_WADDSTR, "w_add_str() failed: ", rc);
+            auto str = fmt::format("w_add_str() failed: {0}", rc);
+            return error(ERROR_WADDSTR, str);
         }
         return OK;
     }

@@ -5,6 +5,13 @@
 #include <stdexcept>
 using namespace tasker;
 
+int error(int rc, const std::string &message)
+{
+    static tasker::logger logging;
+    logging.error(message);
+    return rc;
+}
+
 std::vector<std::string> split(const std::string &str, char delim)
 {
     std::vector<std::string> v;

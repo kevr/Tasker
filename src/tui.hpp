@@ -76,17 +76,20 @@ public:
         }
 
         if (auto rc = ncurses.keypad(root->handle(), true)) {
-            m_return_code = error(ERROR_KEYPAD, "keypad(...) failed: ", rc);
+            auto str = fmt::format("keypad() failed: {0}", rc);
+            m_return_code = error(ERROR_KEYPAD, str);
             return *this;
         }
 
         if (auto rc = ncurses.raw()) {
-            m_return_code = error(ERROR_RAW, "raw() failed: ", rc);
+            auto str = fmt::format("raw() failed: {0}", rc);
+            m_return_code = error(ERROR_RAW, str);
             return *this;
         }
 
         if (auto rc = ncurses.noecho()) {
-            m_return_code = error(ERROR_ECHO, "noecho() failed: ", rc);
+            auto str = fmt::format("noecho() failed: {0}", rc);
+            m_return_code = error(ERROR_ECHO, str);
             return *this;
         }
 
@@ -105,18 +108,21 @@ public:
         m_pane->inherit();  // Update sizes relative to the root
         m_pane->padding(1); // Set a padding of 1
         if (auto rc = m_pane->init()) {
-            m_return_code = error(rc, "m_pane->init() failed: ", rc);
+            auto str = fmt::format("m_pane->init() failed: {0}", rc);
+            m_return_code = error(rc, str);
             return *this;
         }
 
         m_project->inherit();
         if (auto rc = m_project->init()) {
-            m_return_code = error(rc, "m_project->init() failed: ", rc);
+            auto str = fmt::format("m_project->init() failed: {0}", rc);
+            m_return_code = error(rc, str);
             return *this;
         }
 
         if (auto rc = draw()) {
-            m_return_code = error(rc, "tui::init()'s draw() failed: ", rc);
+            auto str = fmt::format("tui::init()'s draw() failed: {0}", rc);
+            m_return_code = error(rc, str);
             return *this;
         }
 
@@ -135,7 +141,8 @@ public:
     int draw() noexcept
     {
         if (auto rc = root->draw()) {
-            return error(rc, "root->draw() failed: ", rc);
+            auto str = fmt::format("root->draw() failed: {0}", rc);
+            return error(rc, str);
         }
 
         if (auto rc = m_pane->draw()) {
