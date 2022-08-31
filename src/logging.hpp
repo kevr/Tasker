@@ -1,6 +1,7 @@
 #ifndef SRC_LOGGING_HPP
 #define SRC_LOGGING_HPP
 
+#include "utility.hpp"
 #include <fmt/format.h>
 #include <iostream>
 
@@ -25,5 +26,16 @@ public:
 };
 
 }; // namespace tasker
+
+const char *source_path(const std::string &path);
+
+#define LOGTRACE()                                                            \
+    fmt::format("[TRACE:{0}#L{1}] {2}()",                                     \
+                source_path(__FILE__),                                        \
+                __LINE__,                                                     \
+                __FUNCTION__)
+
+#define LOG(message)                                                          \
+    fmt::format("[{0}#L{1}] {2}", source_path(__FILE__), __LINE__, message)
 
 #endif /* SRC_LOGGING_HPP */

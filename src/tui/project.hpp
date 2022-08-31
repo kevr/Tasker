@@ -29,7 +29,7 @@ public:
 
     virtual int init() noexcept override
     {
-        logging.info("project::init()");
+        logging.debug(LOGTRACE());
         this->inherit();
         if (auto rc = window<CI>::init()) {
             return rc;
@@ -73,7 +73,7 @@ public:
         if (auto rc = this->ncurses->w_add_str(m_content->handle(),
                                                message.c_str())) {
             auto str = fmt::format("w_add_str() failed: {0}", rc);
-            return error(ERROR_WADDSTR, str);
+            return error(ERROR_WADDSTR, LOG(str));
         }
         return OK;
     }

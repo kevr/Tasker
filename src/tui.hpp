@@ -77,19 +77,19 @@ public:
 
         if (auto rc = ncurses.keypad(root->handle(), true)) {
             auto str = fmt::format("keypad() failed: {0}", rc);
-            m_return_code = error(ERROR_KEYPAD, str);
+            m_return_code = error(ERROR_KEYPAD, LOG(str));
             return *this;
         }
 
         if (auto rc = ncurses.raw()) {
             auto str = fmt::format("raw() failed: {0}", rc);
-            m_return_code = error(ERROR_RAW, str);
+            m_return_code = error(ERROR_RAW, LOG(str));
             return *this;
         }
 
         if (auto rc = ncurses.noecho()) {
             auto str = fmt::format("noecho() failed: {0}", rc);
-            m_return_code = error(ERROR_ECHO, str);
+            m_return_code = error(ERROR_ECHO, LOG(str));
             return *this;
         }
 
@@ -109,20 +109,20 @@ public:
         m_pane->padding(1, 0, 1, 1); // Left, Top, Right, Bottom
         if (auto rc = m_pane->init()) {
             auto str = fmt::format("m_pane->init() failed: {0}", rc);
-            m_return_code = error(rc, str);
+            m_return_code = error(rc, LOG(str));
             return *this;
         }
 
         m_project->inherit();
         if (auto rc = m_project->init()) {
             auto str = fmt::format("m_project->init() failed: {0}", rc);
-            m_return_code = error(rc, str);
+            m_return_code = error(rc, LOG(str));
             return *this;
         }
 
         if (auto rc = draw()) {
             auto str = fmt::format("tui::init()'s draw() failed: {0}", rc);
-            m_return_code = error(rc, str);
+            m_return_code = error(rc, LOG(str));
             return *this;
         }
 
@@ -142,7 +142,7 @@ public:
     {
         if (auto rc = root->draw()) {
             auto str = fmt::format("root->draw() failed: {0}", rc);
-            return error(rc, str);
+            return error(rc, LOG(str));
         }
 
         if (auto rc = m_pane->draw()) {

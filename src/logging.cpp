@@ -45,3 +45,20 @@ void logger::debug(const std::string &line) const
         *out << output;
     }
 }
+
+const char *source_path(const std::string &path)
+{
+    std::string prefix("src/");
+
+#ifdef TESTING
+    // When testing, source code pathing is different than in
+    // the binary. Adjust here via macro.
+    prefix.append("tests/../");
+#endif
+
+    auto pos = path.find(prefix);
+    pos += prefix.size();
+
+    const char *c_str = path.data() + pos;
+    return c_str;
+}

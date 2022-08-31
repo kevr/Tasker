@@ -1,5 +1,6 @@
 #include "utility.hpp"
 #include "config.hpp"
+#include "logging.hpp"
 #include <algorithm>
 #include <fstream>
 #include <stdexcept>

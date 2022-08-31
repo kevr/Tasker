@@ -20,7 +20,7 @@ public:
 
     virtual int init() noexcept override
     {
-        logging.info("bar::init()");
+        logging.debug(LOGTRACE());
         return window<CI>::init();
     }
 
@@ -52,7 +52,7 @@ public:
 
     virtual int refresh() noexcept override
     {
-        logging.debug("bar::refresh()");
+        logging.debug(LOGTRACE());
         return window<CI>::refresh();
     }
 };

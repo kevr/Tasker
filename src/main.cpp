@@ -80,14 +80,15 @@ int tasker_main(ext::ncurses &ncurses, int argc, char *argv[])
     }
 
     // Construct and initialize the TUI
-    logging.info("starting tui...");
+    logging.info("===== BEGIN SESSION =====");
+    logging.debug(LOGTRACE());
     tui::tui term(ncurses);
     if (!term.init())
         return term.end();
 
     auto message =
         fmt::format("supported colors: {0}", ncurses.supported_colors());
-    logging.info(message);
+    logging.info(LOG(message));
 
     // Refresh the TUI
     term.refresh();
@@ -109,12 +110,15 @@ int tasker_main(ext::ncurses &ncurses, int argc, char *argv[])
         }
     }
 
+    // End the TUI
+    auto rc = term.end();
+
     // Restore logger pointer and close any open file stream
+    logging.info("===== END SESSION =====");
     logger::reset();
     ofs.close();
 
-    // End the TUI
-    return term.end();
+    return rc;
 }
 
 int main(int argc, char *argv[])

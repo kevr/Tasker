@@ -24,7 +24,7 @@ public:
 
     virtual int init() noexcept override
     {
-        logging.info("pane::init()");
+        logging.debug(LOGTRACE());
         return window<CI>::init();
     }
 
@@ -60,7 +60,7 @@ public:
 
     int refresh() noexcept final override
     {
-        logging.debug("pane::refresh()");
+        logging.debug(LOGTRACE());
 
         if (auto rc = window<CI>::refresh()) {
             return rc;

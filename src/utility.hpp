@@ -1,7 +1,6 @@
 #ifndef SRC_UTILITY_HPP
 #define SRC_UTILITY_HPP
 
-#include "logging.hpp"
 #include <filesystem>
 #include <iostream>
 #include <string>

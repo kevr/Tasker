@@ -54,11 +54,7 @@ public:
 
     std::tuple<int, int> dimensions() const
     {
-        int x = this->m_x;
-        int y = this->m_y;
-        auto message = fmt::format("dimensions() = ({0}, {1})", x, y);
-        logging.debug(message);
-        return std::make_tuple(x, y);
+        return std::make_tuple(this->m_x, this->m_y);
     }
 
     window &offset(int x_offset, int y_offset)
@@ -81,7 +77,7 @@ public:
     int init() noexcept override
     {
         if (!this->ncurses) {
-            return error(ERR, "window::ncurses was null during init()");
+            return error(ERR, LOG("window::ncurses was null during init()"));
         }
 
         const auto &padding = this->padding();
@@ -91,11 +87,11 @@ public:
         int yo = m_y_offset + padding.top;
 
         auto message = fmt::format("derwin({0}, {1}, {2}, {3})", y, x, yo, xo);
-        logging.debug(message);
+        logging.debug(LOG(message));
 
         this->m_win = this->ncurses->derwin(m_parent->handle(), y, x, yo, xo);
         if (this->m_win == nullptr) {
-            return error(ERROR_DERWIN, "derwin() returned a nullptr");
+            return error(ERROR_DERWIN, LOG("derwin() returned a nullptr"));
         }
 
         m_parent->add_child(this->shared_from_this());
@@ -105,7 +101,8 @@ public:
     int refresh() noexcept override
     {
         if (!*this) {
-            return error(ERR, "window::refresh() called on a null handle");
+            return error(ERR,
+                         LOG("window::refresh() called on a null handle"));
         }
 
         return this->ncurses->wrefresh(this->m_win);

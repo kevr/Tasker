@@ -2,6 +2,7 @@
 #define SRC_TUI_ROOT_WINDOW_HPP
 
 #include "../errors.hpp"
+#include "../logging.hpp"
 #include "../utility.hpp"
 #include "basic_window.hpp"
 #include "tui/color.hpp"
@@ -12,6 +13,9 @@ namespace tasker::tui
 template <typename CI>
 class root_window : public basic_window<CI>
 {
+private:
+    logger logging;
+
 public:
     using basic_window<CI>::basic_window;
 
@@ -23,19 +27,20 @@ public:
 
     int init() noexcept final override
     {
+        logging.debug(LOGTRACE());
         if (!this->ncurses) {
-            return error(ERR, "root_window::ncurses was null during init()");
+            return error(ERR, LOG("ncurses was null during init()"));
         }
 
         this->m_win = this->ncurses->initscr();
         if (this->m_win == nullptr) {
-            return error(ERROR_INITSCR, "initscr() returned a nullptr");
+            return error(ERROR_INITSCR, LOG("initscr() returned a nullptr"));
         }
 
         int x, y;
         this->ncurses->get_max_yx(this->m_win, y, x);
         if (x == -1) {
-            return error(ERROR_GETMAXYX, "get_max_yx() failed");
+            return error(ERROR_GETMAXYX, LOG("get_max_yx() failed"));
         }
         this->set_dimensions(x, y);
 
@@ -62,9 +67,10 @@ public:
 
     int refresh() noexcept final override
     {
+        logging.debug(LOGTRACE());
         if (!this->ncurses) {
-            return error(
-                ERR, "root_window::refresh() called on a null ncurses handle");
+            return error(ERR,
+                         LOG("refresh() called on a null ncurses handle"));
         }
 
         return this->ncurses->refresh();

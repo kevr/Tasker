@@ -236,7 +236,7 @@ TEST_F(main_test, logfile)
     std::ifstream ifs(logpath.c_str());
     std::string output;
     std::getline(ifs, output);
-    ASSERT_EQ(output, "[INFO] starting tui...");
+    ASSERT_EQ(output, "[INFO] ===== BEGIN SESSION =====");
 }
 
 TEST_F(main_test, enable_debug_logging)
