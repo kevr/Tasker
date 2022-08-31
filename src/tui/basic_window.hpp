@@ -58,7 +58,7 @@ public:
     // Defaulted destructor override.
     virtual ~basic_window() noexcept = default;
 
-    basic_window &dimensions(int x, int y)
+    basic_window &set_dimensions(int x, int y)
     {
         m_x = x;
         m_y = y;

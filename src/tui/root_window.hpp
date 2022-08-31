@@ -37,7 +37,7 @@ public:
         if (x == -1) {
             return error(ERROR_GETMAXYX, "get_max_yx() failed");
         }
-        this->dimensions(x, y);
+        this->set_dimensions(x, y);
 
         return OK;
     }
