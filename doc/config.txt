@@ -14,9 +14,9 @@
 # during the program's lifetime.
 #logfile = /path/to/logfile.txt
 
-# Enable debug logging by setting this option to 1.
-# It defaults to off (0).
-#debug = 0
+# Enable debug logging by uncommenting the `debug` option.
+# When set to any value, it will be considered true (enabled).
+#debug = on
 
 ## Keybindings
 # The `key_quit` option controls which keypress is bound
