@@ -28,8 +28,8 @@ public:
     {
         auto [x, _] = this->m_parent->dimensions();
 
-        int padding = this->m_parent->padding();
-        this->m_x = x - (padding * 2);
+        const auto &padding = this->m_parent->padding();
+        this->m_x = x - (padding.left + padding.right);
         this->m_y = 1;
 
         this->offset(0, 0);
@@ -42,7 +42,7 @@ public:
         auto color = COLOR_PAIR(theme::project_bar);
         this->ncurses->wattr_enable(this->handle(), color);
         auto [x, _] = this->dimensions();
-        auto status = fmt::format("{0} {1}", PROG, VERSION);
+        auto status = fmt::format(" {0} {1}", PROG, VERSION);
         std::string spaces(x - status.size(), ' ');
         status += spaces;
         this->ncurses->w_add_str(this->handle(), status.c_str());

@@ -47,8 +47,16 @@ public:
         m_content->inherit();
 
         auto [x, y] = this->m_content->dimensions();
+
+        // Fill up the parent - 1 height to account for the status bar
         m_content->set_dimensions(x, y - 1);
+
+        // Offset content y = 1
         m_content->offset(0, 1);
+
+        // Content padding
+        m_content->padding(1, 1, 1, 0);
+
         if (auto rc = m_content->init()) {
             return rc;
         }

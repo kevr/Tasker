@@ -39,7 +39,12 @@ protected:
     int m_y { 0 };
 
     // Padding
-    int m_padding { 0 };
+    struct padding_t {
+        int top = 0;
+        int right = 0;
+        int bottom = 0;
+        int left = 0;
+    } m_padding;
 
 public:
     basic_window() = default;
@@ -70,13 +75,16 @@ public:
         return std::make_tuple(m_x, m_y);
     }
 
-    basic_window &padding(int p)
+    basic_window &padding(int left, int top, int right, int bottom)
     {
-        m_padding = p;
+        m_padding.left = left;
+        m_padding.top = top;
+        m_padding.right = right;
+        m_padding.bottom = bottom;
         return *this;
     }
 
-    int padding() const
+    const padding_t &padding() const
     {
         return m_padding;
     }

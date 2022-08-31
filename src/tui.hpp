@@ -105,8 +105,8 @@ public:
             ncurses.init_pair(theme::project_bar, color_fg, color_bg);
         }
 
-        m_pane->inherit();  // Update sizes relative to the root
-        m_pane->padding(1); // Set a padding of 1
+        m_pane->inherit();           // Update sizes relative to the root
+        m_pane->padding(1, 0, 1, 1); // Left, Top, Right, Bottom
         if (auto rc = m_pane->init()) {
             auto str = fmt::format("m_pane->init() failed: {0}", rc);
             m_return_code = error(rc, str);

@@ -45,15 +45,17 @@ public:
     window &inherit()
     {
         auto [x, y] = m_parent->dimensions();
-        this->m_x = x - (m_parent->padding() * 2);
-        this->m_y = y - (m_parent->padding() * 2);
+        const auto &padding = m_parent->padding();
+        this->m_x = x - (padding.left + padding.right);
+        this->m_y = y - (padding.top + padding.bottom);
+
         return *this;
     }
 
     std::tuple<int, int> dimensions() const
     {
-        int x = this->m_x - (this->m_padding * 2);
-        int y = this->m_y - (this->m_padding * 2);
+        int x = this->m_x;
+        int y = this->m_y;
         auto message = fmt::format("dimensions() = ({0}, {1})", x, y);
         logging.debug(message);
         return std::make_tuple(x, y);
@@ -82,10 +84,11 @@ public:
             return error(ERR, "window::ncurses was null during init()");
         }
 
-        int y = this->m_y - (this->m_padding * 2);
-        int x = this->m_x - (this->m_padding * 2);
-        int yo = m_y_offset + this->m_padding;
-        int xo = m_x_offset + this->m_padding;
+        const auto &padding = this->padding();
+        int x = this->m_x - (padding.left + padding.right);
+        int y = this->m_y - (padding.top + padding.bottom);
+        int xo = m_x_offset + padding.left;
+        int yo = m_y_offset + padding.top;
 
         auto message = fmt::format("derwin({0}, {1}, {2}, {3})", y, x, yo, xo);
         logging.debug(message);
