@@ -12,6 +12,7 @@ tasker_sources = [
   'config/config.cpp',
   'env.cpp',
   'utility.cpp',
+  'errors.cpp',
   'logging.cpp',
 ]
 

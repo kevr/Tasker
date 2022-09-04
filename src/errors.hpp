@@ -2,6 +2,7 @@
 #define SRC_ERRORS_HPP
 
 #include "ncurses.hpp"
+#include <string>
 
 enum tasker_error : int {
     // ERR is accessible via ncurses
@@ -14,6 +15,10 @@ enum tasker_error : int {
     ERROR_GETMAXYX = 6,
     ERROR_WADDSTR = 7,
     ERROR_NOIMPL = 8,
+    ERROR_ARGS = 9,
+    ERROR_CONFIG = 10,
 };
+
+int raw_error(int rc, const std::string &message);
 
 #endif /* SRC_ERRORS_HPP */

@@ -53,6 +53,11 @@ cfg::config &cfg::config::parse_config(const std::filesystem::path &path)
     return *this;
 }
 
+cfg::config &cfg::config::check_args()
+{
+    return *this;
+}
+
 bool cfg::config::exists(const std::string &key) const
 {
     return m_vars.count(key);

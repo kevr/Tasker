@@ -215,7 +215,7 @@ TEST_F(main_test, custom_config_unknown_option)
     int argc = 3;
 
     auto rc = main_real(argc, argv);
-    ASSERT_EQ(rc, ERR);
+    ASSERT_EQ(rc, ERROR_CONFIG);
 }
 
 TEST_F(main_test, logfile)
@@ -295,4 +295,12 @@ TEST_F(main_test, resize)
     const char *_argv[] = { PROG.data(), nullptr };
     char **argv = const_cast<char **>(_argv);
     ASSERT_EQ(tasker_main(ncurses, 1, argv), OK);
+}
+
+TEST_F(main_test, error_args)
+{
+    ext::ncurses ncurses;
+
+    MAKE_ARGS("--fake-argument");
+    ASSERT_EQ(tasker_main(ncurses, argc, argv), ERROR_ARGS);
 }

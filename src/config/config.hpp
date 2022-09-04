@@ -69,6 +69,9 @@ public:
     config &parse_args(int argc, char *argv[]);
     config &parse_config(const std::filesystem::path &path);
 
+    //! Perform further argument validation specific to this program
+    config &check_args();
+
     bool exists(const std::string &key) const;
 
     template <typename T>

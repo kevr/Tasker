@@ -13,6 +13,7 @@
 #include "ncurses.hpp"
 #include "tui.hpp"
 #include "utility.hpp"
+#include <boost/program_options/errors.hpp>
 #include <chrono>
 #include <iostream>
 #include <thread>
@@ -23,15 +24,21 @@ static std::ofstream ofs;
 
 int tasker_main(ext::ncurses &ncurses, int argc, char *argv[])
 {
+    namespace po = boost::program_options;
+
     // Parse command line arguments and handle them.
     auto &conf = cfg::config::ref();
-    namespace po = boost::program_options;
     conf.option("debug,d", "enable debug logging");
     conf.option("logfile,l",
                 po::value<std::string>(),
                 "designate a log file instead of stderr");
 
-    conf.parse_args(argc, argv);
+    try {
+        conf.parse_args(argc, argv);
+    } catch (boost::program_options::error &e) {
+        auto str = fmt::format("error: {0}\n", e.what());
+        return raw_error(ERROR_ARGS, str);
+    }
 
     if (conf.exists("help")) {
         std::cout << "usage: " << conf.usage() << std::endl
@@ -44,21 +51,26 @@ int tasker_main(ext::ncurses &ncurses, int argc, char *argv[])
         return OK;
     }
 
-    std::optional<std::filesystem::path> path;
+    // The user can optionally provide --config
+    std::optional<std::filesystem::path> config_path;
 
+    // Set config_path where possible
     if (conf.exists("config")) {
-        path = conf["config"];
+        config_path = conf.get<std::string>("config");
     } else {
-        path = env::search_config_path();
+        config_path = env::search_config_path();
     }
 
-    if (path.has_value()) {
+    // If a valid config_path was determined, parse the config.
+    if (config_path.has_value()) {
         try {
-            conf.parse_config(path.value());
-        } catch (boost::program_options::unknown_option &e) {
-            std::cerr << "error: " << e.what() << " found in "
-                      << path.value().string() << std::endl;
-            return ERR;
+            conf.parse_config(config_path.value());
+        } catch (boost::program_options::error &e) {
+            auto str = fmt::format(
+                "error: {0}\nthe configuration read was located at {1}\n",
+                e.what(),
+                config_path->string());
+            return raw_error(ERROR_CONFIG, str);
         }
     }
 
