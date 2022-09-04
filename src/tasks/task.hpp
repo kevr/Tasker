@@ -19,14 +19,13 @@ struct task_data {
 class task
 {
 private:
-    project *m_project; //! Project which owns the task
-    task_data m_data;   //! Metadata related to this task
+    task_data m_data; //! Metadata related to this task
 
 public:
     task() = default;
 
     /*! Construct from scratch */
-    task(project &project_id, task_data data);
+    task(task_data data);
 
     // Copy constructor/assignment
     task(const task &o) = default;
@@ -35,9 +34,6 @@ public:
     // Move constructor/assignment
     task(task &&o) = default;
     task &operator=(task &&o) = default;
-
-    /*! Project ID */
-    const project &parent() const;
 
     /*! Task ID */
     const int id() const;
