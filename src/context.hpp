@@ -31,7 +31,7 @@ public:
     template <typename Config>
     static void bind_keys(context<T> &ctx, Config &conf)
     {
-        ctx.keybinds[conf.template get<char>("key_quit")] = [&ctx] {
+        ctx.keybinds[conf.template get<char>("keybindings.quit")] = [&ctx] {
             ctx.running = false;
         };
     }

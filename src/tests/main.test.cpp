@@ -1,4 +1,3 @@
-#include "config/keybinds.hpp"
 #include <gtest/internal/gtest-port.h>
 #define main main_real
 #include "main.cpp"
@@ -291,7 +290,7 @@ TEST_F(main_test, resize)
     EXPECT_CALL(ncurses, getchar())
         .Times(2)
         .WillOnce(Return(KEY_RESIZE))
-        .WillOnce(Return(cfg::default_keybinds::KEY_QUIT));
+        .WillOnce(Return(defaults::keybinds::KEY_QUIT));
 
     const char *_argv[] = { PROG.data(), nullptr };
     char **argv = const_cast<char **>(_argv);

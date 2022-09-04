@@ -59,7 +59,7 @@ TEST_F(config_test, usage)
 {
     std::string expected =
         PROG + (" [-hvc] [--color.root_border] [--color.project_bar_bg] "
-                "[--color.project_bar_fg]");
+                "[--color.project_bar_fg] [--keybindings.quit]");
     ASSERT_EQ(conf.usage(), expected);
 }
 
@@ -68,32 +68,12 @@ TEST_F(config_test, config_usage)
     conf.option("test", "test help");
     std::string expected =
         PROG + (" [-hvc] [--color.root_border] [--color.project_bar_bg] "
-                "[--color.project_bar_fg] [--test]");
+                "[--color.project_bar_fg] [--keybindings.quit] [--test]");
     ASSERT_EQ(conf.usage(), expected);
 }
 
 TEST_F(config_test, help)
 {
-    auto output = capture_ostream(conf);
-
-    auto lines = split(output, '\n');
-    ASSERT_EQ(lines.size(), 11);
-    ASSERT_EQ(lines[0], "");
-    ASSERT_EQ(lines[1], "Program options:");
-    ASSERT_NE(lines[2].find("-h [ --help ]"), std::string::npos);
-    ASSERT_NE(lines[3].find("-v [ --version ]"), std::string::npos);
-    ASSERT_NE(lines[4].find("-c [ --config ] arg"), std::string::npos);
-    ASSERT_EQ(lines[5], "");
-    ASSERT_EQ(lines[6], "Config options:");
-    ASSERT_NE(lines[7].find("--color.root_border arg"), std::string::npos);
-    ASSERT_NE(lines[8].find("--color.project_bar_bg arg"), std::string::npos);
-    ASSERT_NE(lines[9].find("--color.project_bar_fg arg"), std::string::npos);
-    ASSERT_EQ(lines[10], "");
-}
-
-TEST_F(config_test, config_help)
-{
-    conf.option("test", "test help");
     auto output = capture_ostream(conf);
 
     auto lines = split(output, '\n');
@@ -108,8 +88,21 @@ TEST_F(config_test, config_help)
     ASSERT_NE(lines[7].find("--color.root_border arg"), std::string::npos);
     ASSERT_NE(lines[8].find("--color.project_bar_bg arg"), std::string::npos);
     ASSERT_NE(lines[9].find("--color.project_bar_fg arg"), std::string::npos);
-    ASSERT_NE(lines[10].find("--test"), std::string::npos);
+    ASSERT_NE(lines[10].find("--keybindings.quit arg"), std::string::npos);
     ASSERT_EQ(lines[11], "");
+}
+
+TEST_F(config_test, config_add_option)
+{
+    conf.option("test", "test help");
+    auto output = capture_ostream(conf);
+
+    auto lines = split(output, '\n');
+
+    // Look for --test in the second to last line, which is where
+    // the last option defined shows up in the --help display.
+    auto line = lines[lines.size() - 2];
+    ASSERT_NE(line.find("--test"), std::string::npos);
 }
 
 TEST_F(config_test, getattr)

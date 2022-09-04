@@ -1,5 +1,6 @@
 #include "config.hpp"
 #include "../config.hpp"
+#include "defaults.hpp"
 #include <algorithm>
 #include <fmt/format.h>
 #include <vector>
@@ -75,6 +76,11 @@ void cfg::config::reset()
     m_config->add_options()("color.project_bar_fg",
                             po::value<short>()->default_value(0),
                             "8/256 color ordinal");
+
+    m_config->add_options()(
+        "keybindings.quit",
+        po::value<char>()->default_value(defaults::keybinds::KEY_QUIT),
+        "quit the program");
 }
 
 cfg::config &cfg::config::ref(cfg::config &conf)

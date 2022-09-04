@@ -1,11 +1,9 @@
 #include "../tui.hpp"
 #include "../mocks/ncurses.hpp"
 #include "config.hpp"
-#include "config/keybinds.hpp"
 #include <fmt/format.h>
 #include <gtest/gtest.h>
 using namespace tasker;
-namespace po = boost::program_options;
 
 using ::testing::_;
 using ::testing::Invoke;
@@ -39,10 +37,6 @@ void expect_pane(CI &ncurses, WINDOW *win)
 void setup_config()
 {
     auto &conf = cfg::config::new_ref();
-    conf.option(
-        "key_quit",
-        po::value<char>()->default_value(cfg::default_keybinds::KEY_QUIT),
-        "quit keybind");
     const char *_argv[] = { PROG.data(), nullptr };
     char **argv = const_cast<char **>(_argv);
     conf.parse_args(1, argv);

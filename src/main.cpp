@@ -7,7 +7,6 @@
 #include "callback.hpp"
 #include "config.hpp"
 #include "config/config.hpp"
-#include "config/keybinds.hpp"
 #include "context.hpp"
 #include "env.hpp"
 #include "logging.hpp"
@@ -31,8 +30,6 @@ int tasker_main(ext::ncurses &ncurses, int argc, char *argv[])
     conf.option("logfile,l",
                 po::value<std::string>(),
                 "designate a log file instead of stderr");
-
-    cfg::add_keybind_options(conf);
 
     conf.parse_args(argc, argv);
 
@@ -93,6 +90,12 @@ int tasker_main(ext::ncurses &ncurses, int argc, char *argv[])
     // Refresh the TUI
     term.refresh();
 
+    // TODO: We need a real solution for keybinds that can
+    // be shared across windows.
+    //
+    // Perhaps... we can make the root accessible to all windows,
+    // and the root could hold a ref/ptr to a keybind handler
+    // which we can then call up to from here.
     tasker::context<int> ctx;
     ctx.bind_keys(ctx, conf);
 
