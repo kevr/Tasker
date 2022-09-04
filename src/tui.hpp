@@ -145,10 +145,6 @@ public:
             return error(rc, LOG(str));
         }
 
-        if (auto rc = m_pane->draw()) {
-            return rc;
-        }
-
         return OK;
     }
 

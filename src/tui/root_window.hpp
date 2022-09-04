@@ -65,6 +65,13 @@ public:
                                         ACS_LLCORNER,
                                         ACS_LRCORNER);
         this->ncurses->wattr_disable(this->m_win, pair);
+
+        for (auto &child : this->m_children) {
+            if (auto rc = child->draw()) {
+                return rc;
+            }
+        }
+
         return rc;
     }
 
