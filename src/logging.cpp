@@ -49,15 +49,19 @@ void logger::debug(const std::string &line) const
 const char *source_path(const std::string &path)
 {
     std::string prefix("src/");
+    auto pos = path.find(prefix) + prefix.size();
 
 #ifdef TESTING
-    // When testing, source code pathing is different than in
-    // the binary. Adjust here via macro.
-    prefix.append("tests/../");
+    // If we're testing, we can also end up with this path added
+    // onto the end of the path prefix. This can occur when a
+    // test file includes a header relative to itself:
+    // #include "../some_file.hpp"
+    std::string ext_prefix("tests/../");
+    auto ext_pos = path.find(ext_prefix, pos);
+    if (ext_pos != std::string::npos) {
+        pos = ext_pos + ext_prefix.size();
+    }
 #endif
-
-    auto pos = path.find(prefix);
-    pos += prefix.size();
 
     const char *c_str = path.data() + pos;
     return c_str;
