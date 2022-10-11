@@ -74,6 +74,13 @@ int tasker_main(ext::ncurses &ncurses, int argc, char *argv[])
         }
     }
 
+    try {
+        conf.check_args();
+    } catch (boost::program_options::validation_error &e) {
+        auto str = fmt::format("error: {0}\n", e.what());
+        return raw_error(ERROR_VALIDATE, str);
+    }
+
     if (conf.exists("debug")) {
         logger::set_debug(true);
     }
@@ -102,30 +109,31 @@ int tasker_main(ext::ncurses &ncurses, int argc, char *argv[])
     // Refresh the TUI
     term.refresh();
 
-    // TODO: We need a real solution for keybinds that can
-    // be shared across windows.
-    //
-    // Perhaps... we can make the root accessible to all windows,
-    // and the root could hold a ref/ptr to a keybind handler
-    // which we can then call up to from here.
-    tasker::context<int> ctx;
-    ctx.bind_keys(ctx, conf);
+    auto root = term.get_root();
+    root->context.bind_keys(conf);
 
-    auto resize = [&term]() {
-        term.resize();
-        term.refresh();
+    auto resize = [&]() -> int {
+        auto root = term.get_root();
+        int x, y;
+        ncurses.get_max_yx(root->handle(), y, x);
+        if (x > 22) {
+            term.resize();
+        }
+
+        return OK;
     };
-    ctx.keybinds[KEY_RESIZE] = resize;
+    root->context.keybinds[KEY_RESIZE] = resize;
 
     // TUI input logic, wait-state until quit key is pressed
-    int ch;
-    while (ctx && (ch = ncurses.getchar())) {
-        if (ctx.keybind_exists(ch)) {
-            ctx.call_keybind(ch);
-        }
+    try {
+        input_loop(ncurses, root->context);
+    } catch (std::exception &e) {
+        auto str = fmt::format("unhandled exception: {0}", e.what());
+        logging.error(LOG(str));
     }
 
     // End the TUI
+    logging.debug(LOG("ending tui"));
     auto rc = term.end();
 
     // Restore logger pointer and close any open file stream

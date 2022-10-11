@@ -17,6 +17,7 @@ enum tasker_error : int {
     ERROR_NOIMPL = 8,
     ERROR_ARGS = 9,
     ERROR_CONFIG = 10,
+    ERROR_VALIDATE = 11,
 };
 
 int raw_error(int rc, const std::string &message);

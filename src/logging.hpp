@@ -2,6 +2,7 @@
 #define SRC_LOGGING_HPP
 
 #include "utility.hpp"
+#include <boost/core/demangle.hpp>
 #include <fmt/format.h>
 #include <iostream>
 
@@ -33,6 +34,13 @@ const char *source_path(const std::string &path);
     fmt::format("[TRACE:{0}#L{1}] {2}()",                                     \
                 source_path(__FILE__),                                        \
                 __LINE__,                                                     \
+                __FUNCTION__)
+
+#define R_LOGTRACE()                                                          \
+    fmt::format("[TRACE:{0}#L{1}] {2}::{3}()",                                \
+                source_path(__FILE__),                                        \
+                __LINE__,                                                     \
+                boost::core::demangle(typeid(*this).name()),                  \
                 __FUNCTION__)
 
 #define LOG(message)                                                          \

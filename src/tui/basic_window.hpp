@@ -1,11 +1,13 @@
 #ifndef SRC_TUI_BASIC_WINDOW_HPP
 #define SRC_TUI_BASIC_WINDOW_HPP
 
+#include "../context.hpp"
 #include "../ncurses.hpp"
 #include "logging.hpp"
 #include "object.hpp"
 #include <algorithm>
 #include <memory>
+#include <stdexcept>
 #include <vector>
 
 namespace tasker::tui
@@ -32,29 +34,36 @@ protected:
     WINDOW *m_win = nullptr;
 
     using basic_window_ptr = std::shared_ptr<basic_window<CI>>;
-
+    basic_window_ptr m_root;
     std::vector<basic_window_ptr> m_children;
 
     // Dimensions
-    int m_x { 0 };
-    int m_y { 0 };
+    std::tuple<int, int> m_size;
 
-    // Padding
-    struct padding_t {
-        int top = 0;
-        int right = 0;
-        int bottom = 0;
-        int left = 0;
-    } m_padding;
+    // Offsets
+    std::tuple<int, int> m_offset;
 
     logger logging;
 
 public:
+    inline static int instances = 0;
+
+public:
+    tasker::context<int> context;
+
+public:
+    basic_window_ptr root()
+    {
+        return m_root;
+    }
+
     basic_window() = default;
 
     basic_window(CI &ncurses)
         : ncurses(&ncurses)
     {
+        auto str = fmt::format("basic_window({0}) constructed", ++instances);
+        logging.debug(LOG(str));
     }
 
     // Defaulted move/copy constructors and assignments
@@ -70,39 +79,34 @@ public:
     {
         auto str = fmt::format("set_dimensions({0}, {1})", x, y);
         logging.debug(LOG(str));
-        m_x = x;
-        m_y = y;
+        m_size = std::make_tuple(x, y);
         return *this;
     }
 
     std::tuple<int, int> dimensions() const
     {
-        auto str = fmt::format("dimensions() -> ({0}, {1})", m_x, m_y);
+        auto str = fmt::format("dimensions() -> ({0}, {1})",
+                               std::get<0>(m_size),
+                               std::get<1>(m_size));
         logging.debug(LOG(str));
-        return std::make_tuple(m_x, m_y);
+        return m_size;
     }
 
-    basic_window &padding(int left, int top, int right, int bottom)
+    basic_window &offset(int x, int y)
     {
-        auto str = fmt::format(
-            "padding({0}, {1}, {2}, {3})", left, top, right, bottom);
+        auto str = fmt::format("offset({0}, {1})", x, y);
         logging.debug(LOG(str));
-        m_padding.left = left;
-        m_padding.top = top;
-        m_padding.right = right;
-        m_padding.bottom = bottom;
+        m_offset = std::make_tuple(x, y);
         return *this;
     }
 
-    const padding_t &padding() const
+    std::tuple<int, int> offset() const
     {
-        auto str = fmt::format("padding() -> ({0}, {1}, {2}, {3})",
-                               m_padding.left,
-                               m_padding.top,
-                               m_padding.right,
-                               m_padding.bottom);
+        auto str = fmt::format("offset() -> ({0}, {1})",
+                               std::get<0>(m_offset),
+                               std::get<1>(m_offset));
         logging.debug(LOG(str));
-        return m_padding;
+        return m_offset;
     }
 
     // Utility functions
@@ -116,25 +120,31 @@ public:
         return m_win;
     }
 
-    virtual void resize() noexcept override
-    {
-        // no-op symbol definition for concrete class
-    }
-
     int erase() noexcept
     {
         logging.debug(LOGTRACE());
         return this->ncurses->werase(this->handle());
     }
 
-    int refresh_all() noexcept
+    virtual int refresh() noexcept override
     {
-        logging.debug(LOGTRACE());
-        if (auto rc = refresh())
-            return rc;
+        logging.debug(R_LOGTRACE());
+        if (!*this) {
+            return error(ERR,
+                         LOG("window::refresh() called on a null handle"));
+        }
 
-        for (auto &win : this->m_children) {
-            if (auto rc = win->refresh()) {
+        return this->ncurses->wrefresh(this->m_win);
+    }
+
+    virtual int refresh_all() noexcept override
+    {
+        if (auto rc = refresh()) {
+            return rc;
+        }
+
+        for (auto &child : this->m_children) {
+            if (auto rc = child->refresh_all()) {
                 return rc;
             }
         }
@@ -144,15 +154,48 @@ public:
 
     void add_child(basic_window_ptr window)
     {
-        logging.debug(LOGTRACE());
+        logging.debug(R_LOGTRACE());
+
+        auto str = fmt::format("children: {0}", m_children.size());
+        logging.debug(LOG(str));
+        if (std::find(m_children.begin(), m_children.end(), window) !=
+            m_children.end()) {
+            throw std::logic_error(LOG("window already exists"));
+        }
+
         m_children.emplace_back(std::move(window));
     }
 
-    void remove_child(basic_window_ptr window)
+    void remove_child(const basic_window_ptr &window)
     {
         logging.debug(LOGTRACE());
         auto it = std::find(m_children.begin(), m_children.end(), window);
         m_children.erase(it);
+    }
+
+    virtual int draw() noexcept override
+    {
+        for (auto &child : this->m_children) {
+            if (auto rc = child->draw()) {
+                return rc;
+            }
+        }
+        return OK;
+    }
+
+    virtual int end() noexcept override
+    {
+        if (!this->ncurses) {
+            return error(ERR, "ncurses was null during end()");
+        }
+
+        while (!this->m_children.empty()) {
+            auto child = this->m_children.back();
+            if (auto rc = child->end()) {
+                return rc;
+            }
+        }
+        return OK;
     }
 };
 

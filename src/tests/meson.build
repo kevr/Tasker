@@ -8,14 +8,14 @@ test_deps = [
   gtest_dep,
   gtest_main_dep,
   stub_dep,
-  gmock_dep,
   fmt_dep
 ]
+mock_deps = test_deps + [gmock_dep]
 
 main_test = executable(
   'main.test',
   'main.test.cpp',
-  dependencies : test_deps,
+  dependencies : mock_deps,
 )
 test('main test', main_test)
 
@@ -43,21 +43,21 @@ test('user test', user_test)
 ncurses_test = executable(
   'ncurses.test',
   'ncurses.test.cpp',
-  dependencies : test_deps,
+  dependencies : mock_deps,
 )
 test('ncurses test', ncurses_test)
 
 tui_test = executable(
   'tui.test',
   'tui.test.cpp',
-  dependencies : test_deps,
+  dependencies : mock_deps,
 )
 test('tui test', tui_test)
 
 window_test = executable(
   'window.test',
   'window.test.cpp',
-  dependencies : test_deps,
+  dependencies : mock_deps,
 )
 test('window test', window_test)
 
@@ -92,6 +92,20 @@ test('logging test', logging_test)
 pane_test = executable(
   'pane.test',
   'pane.test.cpp',
-  dependencies : test_deps,
+  dependencies : mock_deps,
 )
 test('pane test', pane_test)
+
+tui_project_test = executable(
+  'tui_project.test',
+  'tui_project.test.cpp',
+  dependencies : mock_deps,
+)
+test('tui_project test', tui_project_test)
+
+board_test = executable(
+  'board.test',
+  'board.test.cpp',
+  dependencies : mock_deps,
+)
+test('board test', board_test)

@@ -93,9 +93,18 @@ public:
             return *this;
         }
 
+        if (auto rc = ncurses.curs_set(0); rc == ERR) {
+            auto str = fmt::format("curs_set(0) failed: {0}", rc);
+            m_return_code = error(ERROR_ECHO, LOG(str));
+            return *this;
+        }
+
         if (ncurses.has_colors()) {
             auto &conf = cfg::config::ref();
             ncurses.start_color();
+            ncurses.use_default_colors();
+
+            ncurses.init_pair(theme::default_color, -1, -1);
 
             auto color = conf.get<short>("color.root_border");
             ncurses.init_pair(theme::root_border, color, COLOR_BLACK);
@@ -105,15 +114,17 @@ public:
             ncurses.init_pair(theme::project_bar, color_fg, color_bg);
         }
 
-        m_pane->inherit();           // Update sizes relative to the root
-        m_pane->padding(1, 0, 1, 1); // Left, Top, Right, Bottom
+        auto [x, y] = root->dimensions();
+        logging.info(fmt::format("new dimensions: {0}, {1}", x, y));
+        m_pane->set_dimensions(x - 2, y - 1);
+        m_pane->offset(1, 0);
         if (auto rc = m_pane->init()) {
             auto str = fmt::format("m_pane->init() failed: {0}", rc);
             m_return_code = error(rc, LOG(str));
             return *this;
         }
 
-        m_project->inherit();
+        m_project->set_dimensions(x - 2, y - 1);
         if (auto rc = m_project->init()) {
             auto str = fmt::format("m_project->init() failed: {0}", rc);
             m_return_code = error(rc, LOG(str));
@@ -131,11 +142,23 @@ public:
 
     void resize() noexcept
     {
+        // Erase the contents of the root window in preparation
+        // for a clean resizing of the terminal.
         root->erase();
+
+        // End the TUI
         end();
-        root->refresh();
+
+        // Global ncurses refresh() must be called here after
+        // endwin(), to cause ncurses to reinitialize the screen
+        // size on the next initscr().
+        this->ncurses.refresh();
+
+        // Initialize the TUI
         init();
-        root->refresh_all();
+
+        // Refresh all windows owned by `root`, including itself
+        refresh();
     }
 
     int draw() noexcept
@@ -158,7 +181,7 @@ public:
         return m_return_code;
     }
 
-    std::shared_ptr<root_window<CI>> window() const
+    std::shared_ptr<root_window<CI>> get_root() const
     {
         return root;
     }
@@ -175,22 +198,20 @@ public:
 
     int end() noexcept
     {
+        logging.debug(LOGTRACE());
+
         if (!m_created || m_ended) {
             return m_return_code;
         }
         m_ended = true;
         m_created = false;
 
-        m_pane->end();
-
         // Just destruct the root window in all cases; in the case where we
         // error out after running initscr(), this will be able to undo
         // what initscr() did if it can.
-        auto rc = root->end();
-
-        // Only update m_return_code if it's not already errored out.
-        if (m_return_code == 0)
+        if (auto rc = root->end(); m_return_code == OK && rc) {
             m_return_code = rc;
+        }
 
         return return_code();
     }

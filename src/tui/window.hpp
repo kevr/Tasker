@@ -23,12 +23,13 @@ protected:
     basic_window_ptr<CI> m_parent;
 
 private:
-    // Offsets
-    int m_x_offset { 0 };
-    int m_y_offset { 0 };
-
     // Logging object
     logger logging;
+
+    std::tuple<int, int> m_old_parent_xy;
+
+public:
+    inline static int instances = 0;
 
 public:
     using basic_window<CI>::basic_window;
@@ -39,34 +40,18 @@ public:
         : basic_window<CI>(ci)
         , m_parent(std::move(parent))
     {
-        inherit();
     }
 
-    window &inherit()
+    virtual void resize() noexcept
     {
+        logging.debug(LOGTRACE());
+
+        auto [ox, oy] = this->dimensions();
+        auto x_delta = std::get<0>(m_old_parent_xy) - ox;
+        auto y_delta = std::get<1>(m_old_parent_xy) - oy;
+
         auto [x, y] = m_parent->dimensions();
-        const auto &padding = m_parent->padding();
-        this->m_x = x - (padding.left + padding.right);
-        this->m_y = y - (padding.top + padding.bottom);
-
-        return *this;
-    }
-
-    std::tuple<int, int> dimensions() const
-    {
-        return std::make_tuple(this->m_x, this->m_y);
-    }
-
-    window &offset(int x_offset, int y_offset)
-    {
-        m_x_offset = x_offset;
-        m_y_offset = y_offset;
-        return *this;
-    }
-
-    std::tuple<int, int> offset() const
-    {
-        return std::make_tuple(m_x_offset, m_y_offset);
+        this->set_dimensions(x - x_delta, y - y_delta);
     }
 
     virtual int draw() noexcept override
@@ -76,17 +61,27 @@ public:
         return ERROR_NOIMPL;
     }
 
-    int init() noexcept override
+    bool initialized() const
     {
+        return this->m_win;
+    }
+
+    virtual int init() noexcept override
+    {
+        logging.debug(R_LOGTRACE());
+
         if (!this->ncurses) {
             return error(ERR, LOG("window::ncurses was null during init()"));
         }
 
-        const auto &padding = this->padding();
-        int x = this->m_x - (padding.left + padding.right);
-        int y = this->m_y - (padding.top + padding.bottom);
-        int xo = m_x_offset + padding.left;
-        int yo = m_y_offset + padding.top;
+        if (auto [x, _] = this->dimensions(); !x) {
+            resize();
+        }
+
+        auto [x, y] = this->dimensions();
+        m_old_parent_xy = m_parent->dimensions();
+
+        auto [xo, yo] = this->offset();
 
         auto message = fmt::format("derwin({0}, {1}, {2}, {3})", y, x, yo, xo);
         logging.debug(LOG(message));
@@ -96,29 +91,35 @@ public:
             return error(ERROR_DERWIN, LOG("derwin() returned a nullptr"));
         }
 
+        auto str = fmt::format("window::init({0}) [0x{1:2x}]",
+                               ++instances,
+                               (unsigned long)&*this);
+        logging.debug(LOG(str));
+
+        this->m_root = m_parent->root();
         m_parent->add_child(this->shared_from_this());
         return OK;
     }
 
-    int refresh() noexcept override
+    virtual int end() noexcept override
     {
-        if (!*this) {
-            return error(ERR,
-                         LOG("window::refresh() called on a null handle"));
-        }
-
-        return this->ncurses->wrefresh(this->m_win);
-    }
-
-    int end() noexcept override
-    {
-        if (this->m_win) {
-            auto rc = this->ncurses->delwin(this->m_win);
-            this->m_parent->remove_child(this->shared_from_this());
-            this->m_win = nullptr;
+        logging.debug(R_LOGTRACE());
+        if (auto rc = basic_window<CI>::end()) {
             return rc;
         }
-        return ERR;
+
+        if (this->m_win) {
+            auto rc = this->ncurses->delwin(this->m_win);
+            this->m_win = nullptr;
+            auto str = fmt::format("window::end({0}) [0x{1:2x}]",
+                                   instances--,
+                                   (unsigned long)&*this);
+            logging.debug(LOG(str));
+            return rc;
+        }
+
+        this->m_parent->remove_child(this->shared_from_this());
+        return OK;
     }
 };
 

@@ -24,18 +24,21 @@ void logger::info(const std::string &line) const
 {
     auto output = fmt::format("[INFO] {0}\n", line);
     *out << output;
+    out->flush();
 }
 
 void logger::error(const std::string &line) const
 {
     auto output = fmt::format("[ERROR] {0}\n", line);
     *out << output;
+    out->flush();
 }
 
 void logger::warning(const std::string &line) const
 {
     auto output = fmt::format("[WARN] {0}\n", line);
     *out << output;
+    out->flush();
 }
 
 void logger::debug(const std::string &line) const
@@ -43,6 +46,7 @@ void logger::debug(const std::string &line) const
     if (debug_enabled) {
         auto output = fmt::format("[DEBUG] {0}\n", line);
         *out << output;
+        out->flush();
     }
 }
 

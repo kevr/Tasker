@@ -2,6 +2,7 @@
 #define SRC_CONTEXT_HPP
 
 #include "callback.hpp"
+#include "ncurses.hpp"
 
 namespace tasker
 {
@@ -18,7 +19,7 @@ public:
         return keybinds.exists(key);
     }
 
-    void call_keybind(const T &key) const
+    int call_keybind(const T &key) const
     {
         return keybinds.call(key);
     }
@@ -29,13 +30,35 @@ public:
     }
 
     template <typename Config>
-    static void bind_keys(context<T> &ctx, Config &conf)
+    void bind_keys(Config &conf)
     {
-        ctx.keybinds[conf.template get<char>("keybindings.quit")] = [&ctx] {
-            ctx.running = false;
+        keybinds[conf.template get<char>("keybindings.quit")] =
+            [this]() -> int {
+            this->running = false;
+            return OK;
+        };
+    }
+
+    template <typename Pointer, typename Func>
+    void bind_pointer(char key, Pointer p, Func fn)
+    {
+        keybinds[key] = [p, fn] {
+            fn(p);
         };
     }
 };
+
+template <typename CI, typename Context>
+void input_loop(CI &ncurses, Context &ctx)
+{
+    // TUI input logic, wait-state until quit key is pressed
+    int ch;
+    while (ctx && (ch = ncurses.getchar())) {
+        if (ctx.keybind_exists(ch)) {
+            ctx.call_keybind(ch);
+        }
+    }
+}
 
 }; // namespace tasker
 

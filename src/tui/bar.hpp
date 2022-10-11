@@ -15,6 +15,8 @@ class bar : public window<CI>
 private:
     logger logging;
 
+    std::tuple<int, int> m_parent_xy;
+
 public:
     using window<CI>::window;
 
@@ -22,19 +24,6 @@ public:
     {
         logging.debug(LOGTRACE());
         return window<CI>::init();
-    }
-
-    bar &inherit()
-    {
-        auto [x, _] = this->m_parent->dimensions();
-
-        const auto &padding = this->m_parent->padding();
-        this->m_x = x - (padding.left + padding.right);
-        this->m_y = 1;
-
-        this->offset(0, 0);
-
-        return *this;
     }
 
     virtual int draw() noexcept override
@@ -49,13 +38,8 @@ public:
         status += spaces;
         this->ncurses->w_add_str(this->handle(), status.c_str());
         this->ncurses->wattr_disable(this->handle(), color);
-        return OK;
-    }
 
-    virtual int refresh() noexcept override
-    {
-        logging.debug(LOGTRACE());
-        return window<CI>::refresh();
+        return OK;
     }
 };
 

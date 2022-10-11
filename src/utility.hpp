@@ -2,6 +2,7 @@
 #define SRC_UTILITY_HPP
 
 #include <filesystem>
+#include <functional>
 #include <iostream>
 #include <string>
 #include <vector>

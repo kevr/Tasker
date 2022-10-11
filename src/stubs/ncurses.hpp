@@ -22,8 +22,13 @@ typedef unsigned chtype;
 #define ACS_LLCORNER '*'
 #define ACS_LRCORNER '*'
 
-// KEY_RESIZE value used in ncurses.h on a Linux x86_64 system
+// KEY_* values used in ncurses.h on a Linux x86_64 system
+// Stubbed here for testing purposes
 #define KEY_RESIZE 410
+#define KEY_DOWN 258
+#define KEY_UP 259
+#define KEY_LEFT 260
+#define KEY_RIGHT 261
 
 namespace tasker::ext
 {
@@ -65,6 +70,9 @@ public:
     virtual int wborder(WINDOW *, chtype, chtype, chtype, chtype, chtype,
                         chtype, chtype, chtype) noexcept;
     virtual int werase(WINDOW *) noexcept;
+    virtual int wresize(WINDOW *, int, int) noexcept;
+    virtual int wmove(WINDOW *, int, int) noexcept;
+    virtual int curs_set(int) noexcept;
 
     // Colors
     virtual int start_color() noexcept;
@@ -74,9 +82,12 @@ public:
 
     virtual int supported_colors() noexcept;
     virtual bool has_colors() noexcept;
+    virtual int use_default_colors() noexcept;
 
     virtual int wattr_enable(WINDOW *, int) noexcept;
     virtual int wattr_disable(WINDOW *, int) noexcept;
+
+    virtual int wbkgd(WINDOW *, chtype) noexcept;
 
 public:
     // Test utilities.

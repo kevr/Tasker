@@ -105,6 +105,21 @@ int ext::ncurses::werase(WINDOW *win) noexcept
     return OK;
 }
 
+int ext::ncurses::wresize(WINDOW *, int, int) noexcept
+{
+    return OK;
+}
+
+int ext::ncurses::wmove(WINDOW *, int, int) noexcept
+{
+    return OK;
+}
+
+int ext::ncurses::curs_set(int) noexcept
+{
+    return OK;
+}
+
 int ext::ncurses::start_color() noexcept
 {
     return OK;
@@ -133,12 +148,22 @@ bool ext::ncurses::has_colors() noexcept
     return true;
 }
 
+int ext::ncurses::use_default_colors() noexcept
+{
+    return OK;
+}
+
 int ext::ncurses::wattr_enable(WINDOW *, int) noexcept
 {
     return OK;
 }
 
 int ext::ncurses::wattr_disable(WINDOW *, int) noexcept
+{
+    return OK;
+}
+
+int ext::ncurses::wbkgd(WINDOW *win, chtype ch) noexcept
 {
     return OK;
 }

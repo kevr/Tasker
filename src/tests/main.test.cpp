@@ -11,6 +11,11 @@ using ::testing::_;
 using ::testing::Invoke;
 using ::testing::Return;
 
+#define MAKE_ARGS(...)                                                        \
+    const char *_argv[] = { PROG.data(), __VA_ARGS__ };                       \
+    char **argv = const_cast<char **>(_argv);                                 \
+    int argc = sizeof(_argv) / sizeof(_argv[0]);
+
 class main_test : public ::testing::Test
 {
 protected:
@@ -48,10 +53,8 @@ TEST_F(main_test, initscr_fails)
     tasker::ext::mock_ncurses ncurses;
     EXPECT_CALL(ncurses, initscr()).WillOnce(Return(nullptr));
 
-    const char *_argv[] = { PROG.c_str(), nullptr };
-    auto argv = const_cast<char **>(_argv);
-
-    auto rc = tasker_main(ncurses, 1, argv);
+    MAKE_ARGS();
+    auto rc = tasker_main(ncurses, argc, argv);
     ASSERT_EQ(rc, ERROR_INITSCR);
 }
 
@@ -67,10 +70,8 @@ TEST_F(main_test, getmaxyx_fails)
         }));
     EXPECT_CALL(ncurses, endwin()).WillOnce(Return(0));
 
-    const char *_argv[] = { PROG.c_str(), nullptr };
-    auto argv = const_cast<char **>(_argv);
-
-    auto rc = tasker_main(ncurses, 1, argv);
+    MAKE_ARGS();
+    auto rc = tasker_main(ncurses, argc, argv);
     ASSERT_EQ(rc, ERROR_GETMAXYX);
 }
 
@@ -88,10 +89,8 @@ TEST_F(main_test, keypad_fails)
     EXPECT_CALL(ncurses, keypad(_, _)).WillOnce(Return(ERR));
     EXPECT_CALL(ncurses, endwin()).WillOnce(Return(0));
 
-    const char *_argv[] = { PROG.c_str(), nullptr };
-    auto argv = const_cast<char **>(_argv);
-
-    auto rc = tasker_main(ncurses, 1, argv);
+    MAKE_ARGS();
+    auto rc = tasker_main(ncurses, argc, argv);
     ASSERT_EQ(rc, ERROR_KEYPAD);
 }
 
@@ -110,10 +109,8 @@ TEST_F(main_test, raw_fails)
     EXPECT_CALL(ncurses, raw()).WillOnce(Return(ERR));
     EXPECT_CALL(ncurses, endwin()).WillOnce(Return(0));
 
-    const char *_argv[] = { PROG.c_str(), nullptr };
-    auto argv = const_cast<char **>(_argv);
-
-    auto rc = tasker_main(ncurses, 1, argv);
+    MAKE_ARGS();
+    auto rc = tasker_main(ncurses, argc, argv);
     ASSERT_EQ(rc, ERROR_RAW);
 }
 
@@ -133,19 +130,15 @@ TEST_F(main_test, noecho_fails)
     EXPECT_CALL(ncurses, noecho()).WillOnce(Return(ERR));
     EXPECT_CALL(ncurses, endwin()).WillOnce(Return(0));
 
-    const char *_argv[] = { PROG.c_str(), nullptr };
-    auto argv = const_cast<char **>(_argv);
-
-    auto rc = tasker_main(ncurses, 1, argv);
+    MAKE_ARGS();
+    auto rc = tasker_main(ncurses, argc, argv);
     ASSERT_EQ(rc, ERROR_ECHO);
 }
 
 TEST_F(main_test, runs)
 {
-    const char *_argv[] = { PROG.c_str(), nullptr };
-    auto argv = const_cast<char **>(_argv);
-
-    auto rc = main_real(1, argv);
+    MAKE_ARGS();
+    auto rc = main_real(argc, argv);
     ASSERT_EQ(rc, OK);
 }
 
@@ -153,10 +146,8 @@ TEST_F(main_test, help)
 {
     testing::internal::CaptureStdout();
 
-    const char *_argv[] = { PROG.c_str(), "--help", nullptr };
-    auto argv = const_cast<char **>(_argv);
-
-    auto rc = main_real(2, argv);
+    MAKE_ARGS("--help");
+    auto rc = main_real(argc, argv);
     ASSERT_EQ(rc, OK);
 
     auto output = testing::internal::GetCapturedStdout();
@@ -175,10 +166,8 @@ TEST_F(main_test, version)
 {
     testing::internal::CaptureStdout();
 
-    const char *_argv[] = { PROG.c_str(), "--version", nullptr };
-    auto argv = const_cast<char **>(_argv);
-
-    auto rc = main_real(2, argv);
+    MAKE_ARGS("--version");
+    auto rc = main_real(argc, argv);
     ASSERT_EQ(rc, OK);
 
     auto output = strip(testing::internal::GetCapturedStdout(), '\n');
@@ -193,10 +182,7 @@ TEST_F(main_test, custom_config)
     std::filesystem::path path(tmpdir);
     path /= "config";
 
-    const char *_argv[] = { PROG.c_str(), "--config", path.c_str(), nullptr };
-    auto argv = const_cast<char **>(_argv);
-    int argc = 3;
-
+    MAKE_ARGS("--config", path.c_str());
     auto rc = main_real(argc, argv);
     ASSERT_EQ(rc, OK);
 }
@@ -210,25 +196,16 @@ TEST_F(main_test, custom_config_unknown_option)
     std::filesystem::path path(tmpdir);
     path /= "config";
 
-    const char *_argv[] = { PROG.c_str(), "--config", path.c_str(), nullptr };
-    auto argv = const_cast<char **>(_argv);
-    int argc = 3;
-
+    MAKE_ARGS("--config", path.c_str());
     auto rc = main_real(argc, argv);
     ASSERT_EQ(rc, ERROR_CONFIG);
 }
 
 TEST_F(main_test, logfile)
 {
-    std::filesystem::path tmpdir;
     auto logpath = tmpdir / "test.log";
 
-    const char *_argv[] = {
-        PROG.c_str(), "--logfile", logpath.c_str(), nullptr
-    };
-    auto argv = const_cast<char **>(_argv);
-    int argc = 3;
-
+    MAKE_ARGS("--logfile", logpath.c_str());
     auto rc = main_real(argc, argv);
     ASSERT_EQ(rc, OK);
 
@@ -241,12 +218,7 @@ TEST_F(main_test, logfile)
 TEST_F(main_test, enable_debug_logging)
 {
     const auto logpath = tmpdir / "tasker.log";
-    const char *_argv[] = {
-        PROG.c_str(), "--debug", "--logfile", logpath.c_str(), nullptr
-    };
-    auto argv = const_cast<char **>(_argv);
-    int argc = 4;
-
+    MAKE_ARGS("--debug", "--logfile", logpath.c_str());
     auto rc = main_real(argc, argv);
     ASSERT_EQ(rc, OK);
 
@@ -292,9 +264,8 @@ TEST_F(main_test, resize)
         .WillOnce(Return(KEY_RESIZE))
         .WillOnce(Return(defaults::keybinds::KEY_QUIT));
 
-    const char *_argv[] = { PROG.data(), nullptr };
-    char **argv = const_cast<char **>(_argv);
-    ASSERT_EQ(tasker_main(ncurses, 1, argv), OK);
+    MAKE_ARGS();
+    ASSERT_EQ(tasker_main(ncurses, argc, argv), OK);
 }
 
 TEST_F(main_test, error_args)
@@ -303,4 +274,12 @@ TEST_F(main_test, error_args)
 
     MAKE_ARGS("--fake-argument");
     ASSERT_EQ(tasker_main(ncurses, argc, argv), ERROR_ARGS);
+}
+
+TEST_F(main_test, error_validate)
+{
+    ext::ncurses ncurses;
+
+    MAKE_ARGS("--style.task_list_width", "-1");
+    ASSERT_EQ(tasker_main(ncurses, argc, argv), ERROR_VALIDATE);
 }

@@ -59,7 +59,8 @@ TEST_F(config_test, usage)
 {
     std::string expected =
         PROG + (" [-hvc] [--color.root_border] [--color.project_bar_bg] "
-                "[--color.project_bar_fg] [--keybindings.quit]");
+                "[--color.project_bar_fg] [--style.task_list_width] "
+                "[--keybindings.quit] [--keybindings.new_list]");
     ASSERT_EQ(conf.usage(), expected);
 }
 
@@ -68,7 +69,8 @@ TEST_F(config_test, config_usage)
     conf.option("test", "test help");
     std::string expected =
         PROG + (" [-hvc] [--color.root_border] [--color.project_bar_bg] "
-                "[--color.project_bar_fg] [--keybindings.quit] [--test]");
+                "[--color.project_bar_fg] [--style.task_list_width] "
+                "[--keybindings.quit] [--keybindings.new_list] [--test]");
     ASSERT_EQ(conf.usage(), expected);
 }
 
@@ -77,7 +79,7 @@ TEST_F(config_test, help)
     auto output = capture_ostream(conf);
 
     auto lines = split(output, '\n');
-    ASSERT_EQ(lines.size(), 12);
+    ASSERT_EQ(lines.size(), 14);
     ASSERT_EQ(lines[0], "");
     ASSERT_EQ(lines[1], "Program options:");
     ASSERT_NE(lines[2].find("-h [ --help ]"), std::string::npos);
@@ -88,8 +90,11 @@ TEST_F(config_test, help)
     ASSERT_NE(lines[7].find("--color.root_border arg"), std::string::npos);
     ASSERT_NE(lines[8].find("--color.project_bar_bg arg"), std::string::npos);
     ASSERT_NE(lines[9].find("--color.project_bar_fg arg"), std::string::npos);
-    ASSERT_NE(lines[10].find("--keybindings.quit arg"), std::string::npos);
-    ASSERT_EQ(lines[11], "");
+    ASSERT_NE(lines[10].find("--style.task_list_width arg"),
+              std::string::npos);
+    ASSERT_NE(lines[11].find("--keybindings.quit arg"), std::string::npos);
+    ASSERT_NE(lines[12].find("--keybindings.new_list arg"), std::string::npos);
+    ASSERT_EQ(lines[13], "");
 }
 
 TEST_F(config_test, config_add_option)
@@ -146,4 +151,31 @@ TEST_F(config_test, parse_config)
     conf.parse_config(config_path);
 
     ASSERT_EQ(conf.get<int>("test"), 5);
+}
+
+TEST(config, default_value)
+{
+    auto &conf = cfg::config::new_ref();
+    auto some_option = conf.get<std::string>("some_option", "some_default");
+    ASSERT_EQ(some_option, "some_default");
+}
+
+TEST(config, get_value)
+{
+    namespace po = boost::program_options;
+    auto &conf = cfg::config::new_ref();
+
+    conf.option("test", po::value<int>()->default_value(10), "test help");
+    const char *_argv[] = { PROG.data() };
+    char **argv = const_cast<char **>(_argv);
+    int argc = 1;
+    conf.parse_args(argc, argv);
+
+    auto test = conf.get<int>("test");
+    ASSERT_EQ(test, 10);
+
+    // Let's also exercise the default_value path where the key
+    // exists, so the key's value is returned and not the default.
+    test = conf.get<int>("test", 0);
+    ASSERT_EQ(test, 10);
 }

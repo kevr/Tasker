@@ -28,7 +28,7 @@ template <typename CI>
 void expect_pane(CI &ncurses, WINDOW *win)
 {
     EXPECT_CALL(ncurses, derwin(_, _, _, _, _)).WillRepeatedly(Return(win));
-    EXPECT_CALL(ncurses, delwin(_)).WillOnce(Return(OK));
+    EXPECT_CALL(ncurses, delwin(_)).WillRepeatedly(Return(OK));
     EXPECT_CALL(ncurses, w_add_str(_, _)).WillRepeatedly(Return(OK));
     EXPECT_CALL(ncurses, wborder(_, _, _, _, _, _, _, _, _))
         .WillRepeatedly(Return(OK));
@@ -109,18 +109,18 @@ TEST_F(mock_tui_test, w_add_str)
 {
     std::string output;
     EXPECT_CALL(ncurses, w_add_str(_, _))
-        .Times(2)
+        .Times(4)
         .WillOnce(Return(OK))
-        .WillOnce(Invoke([&output](WINDOW *win, const char *str) -> int {
+        .WillRepeatedly(Invoke([&output](WINDOW *win, const char *str) -> int {
             output = str;
             return OK;
         }));
     term.init();
+    term.draw();
     ASSERT_EQ(term.return_code(), OK);
 
-    auto expected = fmt::format("Press '{0}' to quit...",
-                                (char)cfg::default_keybinds::KEY_QUIT);
-    EXPECT_EQ(output, expected);
+    // TODO: Fix this keybind control. Should it be 'L'?
+    EXPECT_EQ(output, "Press 'n' to add a list...");
 }
 
 TEST_F(mock_tui_test, waddstr_fails)

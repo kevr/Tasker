@@ -11,7 +11,7 @@ template <typename T>
 class callback
 {
 private:
-    using function_t = std::function<void()>;
+    using function_t = std::function<int()>;
     std::map<T, function_t> table;
 
 public:
@@ -25,7 +25,7 @@ public:
         return table.find(key) != table.end();
     }
 
-    void call(const T &key) const
+    int call(const T &key) const
     {
         return table.at(key)();
     }

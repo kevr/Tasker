@@ -80,6 +80,15 @@ public:
         return m_vars.at(key).as<T>();
     }
 
+    template <typename T>
+    T get(const std::string &key, const T &default_value)
+    {
+        if (!m_vars.count(key)) {
+            return default_value;
+        }
+        return get<T>(key);
+    }
+
     std::string operator[](const std::string &key) const;
 
     //! Reset configuration options and parsed variables

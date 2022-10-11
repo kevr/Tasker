@@ -1,6 +1,7 @@
 #ifndef SRC_TUI_ROOT_WINDOW_HPP
 #define SRC_TUI_ROOT_WINDOW_HPP
 
+#include "../context.hpp"
 #include "../errors.hpp"
 #include "../logging.hpp"
 #include "../utility.hpp"
@@ -22,20 +23,22 @@ public:
     // Defaulted destructor override.
     ~root_window() noexcept
     {
-        end();
     }
 
-    int init() noexcept final override
+    virtual int init() noexcept final override
     {
         logging.debug(LOGTRACE());
         if (!this->ncurses) {
             return error(ERR, LOG("ncurses was null during init()"));
         }
 
-        logging.debug(LOG("initscr()"));
-        this->m_win = this->ncurses->initscr();
         if (this->m_win == nullptr) {
-            return error(ERROR_INITSCR, LOG("initscr() returned a nullptr"));
+            logging.debug(LOG("initscr()"));
+            this->m_win = this->ncurses->initscr();
+            if (this->m_win == nullptr) {
+                return error(ERROR_INITSCR,
+                             LOG("initscr() returned a nullptr"));
+            }
         }
 
         int x, y;
@@ -45,55 +48,64 @@ public:
         }
         this->set_dimensions(x, y);
 
+        auto str = fmt::format("get_max_yx({0}, {1})", y, x);
+        logging.debug(LOG(str));
+
+        this->m_root = this->shared_from_this();
         return OK;
     }
 
-    virtual int draw() noexcept override
+    virtual int draw() noexcept final override
     {
         logging.debug(LOGTRACE());
 
-        // Set a border on `root`.
+        // Set color attributes before actual drawing
         auto pair = COLOR_PAIR(theme::root_border);
         this->ncurses->wattr_enable(this->m_win, pair);
-        int rc = this->ncurses->wborder(this->handle(),
-                                        ACS_VLINE,
-                                        ACS_VLINE,
-                                        ACS_HLINE,
-                                        ACS_HLINE,
-                                        ACS_ULCORNER,
-                                        ACS_URCORNER,
-                                        ACS_LLCORNER,
-                                        ACS_LRCORNER);
-        this->ncurses->wattr_disable(this->m_win, pair);
 
-        for (auto &child : this->m_children) {
-            if (auto rc = child->draw()) {
-                return rc;
-            }
+        // Draw a border around the window. If it fails to draw,
+        // we return the error code with a message.
+        auto rc = this->ncurses->wborder(this->handle(),
+                                         ACS_VLINE,
+                                         ACS_VLINE,
+                                         ACS_HLINE,
+                                         ACS_HLINE,
+                                         ACS_ULCORNER,
+                                         ACS_URCORNER,
+                                         ACS_LLCORNER,
+                                         ACS_LRCORNER);
+        if (rc) {
+            return error(rc, "root_window wborder failed to draw");
         }
 
-        return rc;
+        // Revert color attributes
+        this->ncurses->wattr_disable(this->m_win, pair);
+
+        return basic_window<CI>::draw();
     }
 
-    int refresh() noexcept final override
+    virtual int refresh() noexcept final override
     {
-        logging.debug(LOGTRACE());
         if (!this->ncurses) {
-            return error(ERR,
-                         LOG("refresh() called on a null ncurses handle"));
+            return error(ERR, "ncurses was null during refresh");
         }
 
         return this->ncurses->refresh();
     }
 
-    int end() noexcept final override
+    virtual int end() noexcept final override
     {
+        basic_window<CI>::end();
+
         if (this->m_win) {
-            auto rc = this->ncurses->endwin();
+            if (auto rc = this->ncurses->endwin()) {
+                auto str = fmt::format("endwin() failed: {0}", rc);
+                return error(rc, LOG(str));
+            }
+
             this->m_win = nullptr;
-            return rc;
         }
-        return ERR;
+        return OK;
     }
 };
 

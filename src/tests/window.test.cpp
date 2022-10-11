@@ -7,13 +7,15 @@ using ::testing::_;
 using ::testing::Invoke;
 using ::testing::Return;
 
+using root_window_t = tui::root_window<ext::ncurses>;
+using root_window_ptr = std::shared_ptr<root_window_t>;
+
 // Test fixture using stubbed ncurses.
 class window_test : public ::testing::Test
 {
 protected:
     ext::ncurses ncurses;
 
-    using root_window_t = tui::root_window<ext::ncurses>;
     std::shared_ptr<root_window_t> root =
         std::make_shared<root_window_t>(ncurses);
 };
@@ -24,7 +26,6 @@ class mock_window_test : public ::testing::Test
 protected:
     ext::mock_ncurses ncurses;
 
-    using root_window_t = tui::root_window<ext::ncurses>;
     std::shared_ptr<root_window_t> root =
         std::make_shared<root_window_t>(ncurses);
 };
@@ -39,41 +40,37 @@ void expect_root_init(CI &ncurses, WINDOW *windowPointer)
             x = 800;
             y = 600;
         }));
-    EXPECT_CALL(ncurses, endwin()).WillRepeatedly(Return(OK));
-}
-
-//! Assert some basic window actions: init(), refresh() and end().
-template <typename W>
-void assert_window_actions(W &window, int init_rc, int refresh_rc, int end_rc)
-{
-    ASSERT_EQ(window.init(), init_rc);
-    ASSERT_EQ(window.refresh(), refresh_rc);
-    ASSERT_EQ(window.end(), end_rc);
+    EXPECT_CALL(ncurses, endwin()).WillRepeatedly(Return(ERR));
 }
 
 TEST(root_window, ncurses_null)
 {
     // When root is constructed with nothing, everything errors out.
-    tui::root_window<ext::ncurses> root;
-    assert_window_actions(root, ERR, ERR, ERR);
+    root_window_ptr root = std::make_shared<root_window_t>();
+    ASSERT_EQ(root->init(), ERR);
+    ASSERT_EQ(root->refresh(), ERR);
+    ASSERT_EQ(root->end(), OK);
+    // assert_window_actions(root, ERR, ERR, ERR);
 }
 
 TEST(root_window, stub_nulls_root)
 {
     // Test that ncurses.root() is nulled whenever a root_window<CI> ends.
     ext::ncurses ncurses;
-    tui::root_window<ext::ncurses> root(ncurses);
-    ASSERT_EQ(root.init(), OK);
-    ASSERT_EQ(ncurses.root(), root.handle());
-    ASSERT_EQ(root.end(), OK);
+    auto root = std::make_shared<root_window_t>(ncurses);
+    ASSERT_EQ(root->init(), OK);
+    ASSERT_EQ(ncurses.root(), root->handle());
+    ASSERT_EQ(root->end(), OK);
     ASSERT_EQ(ncurses.root(), nullptr);
 }
 
 TEST(window, ncurses_null)
 {
     // When window is constructed with nothing, everything errors out.
-    tui::window<ext::ncurses> window;
-    assert_window_actions(window, ERR, ERR, ERR);
+    auto window = std::make_shared<tui::window<ext::ncurses>>();
+    ASSERT_EQ(window->init(), ERR);
+    ASSERT_EQ(window->refresh(), ERR);
+    ASSERT_EQ(window->end(), ERR);
 }
 
 TEST_F(window_test, works)
@@ -81,7 +78,9 @@ TEST_F(window_test, works)
     // When it is constructed
     using window_t = tui::window<ext::ncurses>;
     auto window = std::make_shared<window_t>(ncurses, root);
-    assert_window_actions(*window, OK, OK, OK);
+    ASSERT_EQ(window->init(), OK);
+    ASSERT_EQ(window->refresh(), OK);
+    ASSERT_EQ(window->end(), OK);
 }
 
 TEST_F(window_test, stub_raii)

@@ -2,6 +2,7 @@
 #include "../config.hpp"
 #include "defaults.hpp"
 #include <algorithm>
+#include <boost/program_options/errors.hpp>
 #include <fmt/format.h>
 #include <vector>
 using namespace tasker;
@@ -55,6 +56,12 @@ cfg::config &cfg::config::parse_config(const std::filesystem::path &path)
 
 cfg::config &cfg::config::check_args()
 {
+    if (auto x = get<int>("style.task_list_width"); x <= 0) {
+        auto exc = po::invalid_option_value(std::to_string(x));
+        exc.set_option_name("style.task_list_width");
+        throw exc;
+    }
+
     return *this;
 }
 
@@ -81,11 +88,18 @@ void cfg::config::reset()
     m_config->add_options()("color.project_bar_fg",
                             po::value<short>()->default_value(0),
                             "8/256 color ordinal");
+    m_config->add_options()("style.task_list_width",
+                            po::value<int>()->default_value(20),
+                            "task list width");
 
     m_config->add_options()(
         "keybindings.quit",
         po::value<char>()->default_value(defaults::keybinds::KEY_QUIT),
         "quit the program");
+    m_config->add_options()(
+        "keybindings.new_list",
+        po::value<char>()->default_value(defaults::keybinds::KEY_NEW_LIST),
+        "add a new list to a project board");
 }
 
 cfg::config &cfg::config::ref(cfg::config &conf)

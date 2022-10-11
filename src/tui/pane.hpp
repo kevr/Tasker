@@ -62,7 +62,9 @@ public:
         return OK;
     }
 
-    int refresh() noexcept final override
+    // pane::refresh only focuses on refreshing itself, followed by
+    // its focused element.
+    virtual int refresh() noexcept final override
     {
         logging.debug(LOGTRACE());
 
@@ -71,15 +73,13 @@ public:
         }
 
         if (this->m_children.size()) {
-            if (auto rc = this->m_children[m_i]->refresh()) {
+            if (auto rc = this->m_children[m_i]->refresh_all()) {
                 return rc;
             }
         }
 
         return OK;
     }
-
-    int refresh_all() noexcept = delete;
 };
 
 }; // namespace tasker::tui

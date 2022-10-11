@@ -85,6 +85,21 @@ int ext::ncurses::werase(WINDOW *win) noexcept
     return ::werase(win);
 }
 
+int ext::ncurses::wresize(WINDOW *win, int y, int x) noexcept
+{
+    return ::wresize(win, y, x);
+}
+
+int ext::ncurses::wmove(WINDOW *win, int y, int x) noexcept
+{
+    return ::wmove(win, y, x);
+}
+
+int ext::ncurses::curs_set(int visibility) noexcept
+{
+    return ::curs_set(visibility);
+}
+
 int ext::ncurses::start_color() noexcept
 {
     return ::start_color();
@@ -105,6 +120,11 @@ bool ext::ncurses::has_colors() noexcept
     return ::has_colors();
 }
 
+int ext::ncurses::use_default_colors() noexcept
+{
+    return ::use_default_colors();
+}
+
 int ext::ncurses::wattr_enable(WINDOW *win, int attrs) noexcept
 {
     return wattron(win, attrs);
@@ -118,5 +138,10 @@ int ext::ncurses::wattr_disable(WINDOW *win, int attrs) noexcept
 WINDOW *ext::ncurses::root() noexcept
 {
     return m_root;
+}
+
+int ext::ncurses::wbkgd(WINDOW *win, chtype ch) noexcept
+{
+    return ::wbkgd(win, ch);
 }
 // LCOV_EXCL_STOP
