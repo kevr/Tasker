@@ -109,3 +109,10 @@ board_test = executable(
   dependencies : mock_deps,
 )
 test('board test', board_test)
+
+context_test = executable(
+  'context.test',
+  'context.test.cpp',
+  dependencies : mock_deps,
+)
+test('context test', context_test)

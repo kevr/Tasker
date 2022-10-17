@@ -125,12 +125,7 @@ int tasker_main(ext::ncurses &ncurses, int argc, char *argv[])
     root->context.keybinds[KEY_RESIZE] = resize;
 
     // TUI input logic, wait-state until quit key is pressed
-    try {
-        input_loop(ncurses, root->context);
-    } catch (std::exception &e) {
-        auto str = fmt::format("unhandled exception: {0}", e.what());
-        logging.error(LOG(str));
-    }
+    safe_input_loop(ncurses, root->context);
 
     // End the TUI
     logging.debug(LOG("ending tui"));

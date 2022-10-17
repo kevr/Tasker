@@ -2,6 +2,7 @@
 #define SRC_CONTEXT_HPP
 
 #include "callback.hpp"
+#include "logging.hpp"
 #include "ncurses.hpp"
 
 namespace tasker
@@ -47,6 +48,17 @@ public:
         };
     }
 };
+
+template <typename CI, typename Context>
+void safe_input_loop(CI &ncurses, Context &ctx)
+{
+    try {
+        input_loop(ncurses, ctx);
+    } catch (std::exception &e) {
+        auto str = fmt::format("unhandled exception: {0}", e.what());
+        logger().error(LOG(str));
+    }
+}
 
 template <typename CI, typename Context>
 void input_loop(CI &ncurses, Context &ctx)
