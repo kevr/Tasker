@@ -40,11 +40,16 @@ std::string cfg::config::usage() const
     return PROG + " " + usage;
 }
 
-cfg::config &cfg::config::parse_args(int ac, char *av[])
+cfg::config &cfg::config::parse_args(int argc, char *argv[])
+{
+    return parse_args(argc, const_cast<const char **>(argv));
+}
+
+cfg::config &cfg::config::parse_args(int argc, const char *argv[])
 {
     po::options_description cmdline;
     cmdline.add(m_desc).add(*m_config);
-    po::store(po::parse_command_line(ac, av, cmdline), m_vars);
+    po::store(po::parse_command_line(argc, argv, cmdline), m_vars);
     return *this;
 }
 

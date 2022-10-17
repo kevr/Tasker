@@ -11,11 +11,6 @@ using ::testing::_;
 using ::testing::Invoke;
 using ::testing::Return;
 
-#define MAKE_ARGS(...)                                                        \
-    const char *_argv[] = { PROG.data(), __VA_ARGS__ };                       \
-    char **argv = const_cast<char **>(_argv);                                 \
-    int argc = sizeof(_argv) / sizeof(_argv[0]);
-
 class main_test : public ::testing::Test
 {
 protected:

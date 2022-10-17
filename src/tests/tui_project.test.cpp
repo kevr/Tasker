@@ -1,4 +1,5 @@
 #include "mocks/ncurses.hpp"
+#include "testing.hpp"
 #include "tui/project.hpp"
 #include "tui/root_window.hpp"
 #include <gtest/gtest.h>
@@ -35,8 +36,8 @@ public:
     {
         // Config has to be parsed in order for tui::tui to be able
         // to reach certain config variables during initialization
-        const char *argv[] = { "tasker" };
-        cfg::config::ref().parse_args(1, const_cast<char **>(argv));
+        MAKE_ARGS();
+        cfg::config::ref().parse_args(argc, argv);
 
         // Mock up some calls that always occur
         EXPECT_CALL(ncurses, initscr()).WillOnce(Return(&fake_win));

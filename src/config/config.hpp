@@ -67,6 +67,7 @@ public:
     std::string usage() const;
 
     config &parse_args(int argc, char *argv[]);
+    config &parse_args(int argc, const char *argv[]);
     config &parse_config(const std::filesystem::path &path);
 
     //! Perform further argument validation specific to this program

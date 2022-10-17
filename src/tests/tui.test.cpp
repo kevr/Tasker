@@ -36,10 +36,8 @@ void expect_pane(CI &ncurses, WINDOW *win)
 
 void setup_config()
 {
-    auto &conf = cfg::config::new_ref();
-    const char *_argv[] = { PROG.data(), nullptr };
-    char **argv = const_cast<char **>(_argv);
-    conf.parse_args(1, argv);
+    MAKE_ARGS();
+    cfg::config::new_ref().parse_args(argc, argv);
 }
 
 class tui_test : public ::testing::Test

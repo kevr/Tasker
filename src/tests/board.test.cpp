@@ -1,5 +1,6 @@
 #include "tui/board.hpp"
 #include "mocks/ncurses.hpp"
+#include "testing.hpp"
 #include <gtest/gtest.h>
 using namespace tasker;
 
@@ -29,9 +30,8 @@ protected: // Member variables
 public: // Member functions
     void SetUp()
     {
-        const char *_argv[] = { "tasker" };
-        char **argv = const_cast<char **>(_argv);
-        cfg::config::ref().parse_args(1, argv);
+        MAKE_ARGS();
+        cfg::config::ref().parse_args(argc, argv);
 
         root = std::make_shared<root_window_t>(ncurses);
         board = std::make_shared<board_t>(ncurses, root);

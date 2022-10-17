@@ -1,5 +1,6 @@
 #include "config/config.hpp"
 #include "config.hpp"
+#include "testing.hpp"
 #include "utility.hpp"
 #include <filesystem>
 #include <fstream>
@@ -114,10 +115,7 @@ TEST_F(config_test, getattr)
 {
     conf.option("test", po::value<std::string>(), "test help");
 
-    const char *_argv[] = { PROG.c_str(), "--test", "test-data", nullptr };
-    auto argv = const_cast<char **>(_argv);
-    int argc = 3;
-
+    MAKE_ARGS("--test", "test-data");
     conf.parse_args(argc, argv);
 
     // Exercise operator[]
@@ -128,10 +126,7 @@ TEST_F(config_test, get)
 {
     conf.option("test", po::value<int>(), "test help");
 
-    const char *_argv[] = { PROG.c_str(), "--test", "9", nullptr };
-    auto argv = const_cast<char **>(_argv);
-    int argc = 3;
-
+    MAKE_ARGS("--test", "9");
     conf.parse_args(argc, argv);
 
     ASSERT_EQ(conf.get<int>("test"), 9);
@@ -166,9 +161,7 @@ TEST(config, get_value)
     auto &conf = cfg::config::new_ref();
 
     conf.option("test", po::value<int>()->default_value(10), "test help");
-    const char *_argv[] = { PROG.data() };
-    char **argv = const_cast<char **>(_argv);
-    int argc = 1;
+    MAKE_ARGS();
     conf.parse_args(argc, argv);
 
     auto test = conf.get<int>("test");

@@ -22,7 +22,7 @@ using namespace tasker;
 static logger logging;
 static std::ofstream ofs;
 
-int tasker_main(ext::ncurses &ncurses, int argc, char *argv[])
+int tasker_main(ext::ncurses &ncurses, int argc, const char *argv[])
 {
     namespace po = boost::program_options;
 
@@ -139,7 +139,7 @@ int tasker_main(ext::ncurses &ncurses, int argc, char *argv[])
     return rc;
 }
 
-int main(int argc, char *argv[])
+int main(int argc, const char *argv[])
 {
     auto ncurses = tasker::ext::ncurses();
     return tasker_main(ncurses, argc, argv);

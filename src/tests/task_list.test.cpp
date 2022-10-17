@@ -1,5 +1,6 @@
 #include "tui/task_list.hpp"
 #include "mocks/ncurses.hpp"
+#include "testing.hpp"
 #include "tui/root_window.hpp"
 #include <gtest/gtest.h>
 using namespace tasker;
@@ -31,9 +32,8 @@ protected:
 public:
     void SetUp()
     {
-        const char *_argv[] = { "tasker" };
-        char **argv = const_cast<char **>(_argv);
-        cfg::config::new_ref().parse_args(1, argv);
+        MAKE_ARGS();
+        cfg::config::new_ref().parse_args(argc, argv);
 
         root = std::make_shared<root_window_t>(ncurses);
 

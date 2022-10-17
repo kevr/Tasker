@@ -1,6 +1,7 @@
 #ifndef SRC_TESTING_HPP
 #define SRC_TESTING_HPP
 
+#include "config.hpp"
 #include "utility.hpp"
 #include <filesystem>
 
@@ -35,5 +36,9 @@ namespace tasker
 inline static test::context &test_context = test::context::ref();
 
 }; // namespace tasker
+
+#define MAKE_ARGS(...)                                                        \
+    const char *argv[] = { PROG.data(), __VA_ARGS__ };                        \
+    int argc = sizeof(argv) / sizeof(argv[0]);
 
 #endif /* SRC_TESTING_HPP */
