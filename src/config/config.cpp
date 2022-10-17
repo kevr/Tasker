@@ -102,9 +102,9 @@ void cfg::config::reset()
         po::value<char>()->default_value(defaults::keybinds::KEY_QUIT),
         "quit the program");
     m_config->add_options()(
-        "keybindings.new_list",
+        "keybindings.project.new_list",
         po::value<char>()->default_value(defaults::keybinds::KEY_NEW_LIST),
-        "add a new list to a project board");
+        "add a new list to the project board");
 }
 
 cfg::config &cfg::config::ref(cfg::config &conf)

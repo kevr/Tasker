@@ -74,7 +74,7 @@ TEST_F(config_test, usage)
     std::string expected =
         PROG + (" [-hvc] [--color.root_border] [--color.project_bar_bg] "
                 "[--color.project_bar_fg] [--style.task_list_width] "
-                "[--keybindings.quit] [--keybindings.new_list]");
+                "[--keybindings.quit] [--keybindings.project.new_list]");
     ASSERT_EQ(conf.usage(), expected);
 }
 
@@ -82,9 +82,10 @@ TEST_F(config_test, config_usage)
 {
     conf.option("test", "test help");
     std::string expected =
-        PROG + (" [-hvc] [--color.root_border] [--color.project_bar_bg] "
-                "[--color.project_bar_fg] [--style.task_list_width] "
-                "[--keybindings.quit] [--keybindings.new_list] [--test]");
+        PROG +
+        (" [-hvc] [--color.root_border] [--color.project_bar_bg] "
+         "[--color.project_bar_fg] [--style.task_list_width] "
+         "[--keybindings.quit] [--keybindings.project.new_list] [--test]");
     ASSERT_EQ(conf.usage(), expected);
 }
 
@@ -93,7 +94,7 @@ TEST_F(config_test, help)
     auto output = capture_ostream(conf);
 
     auto lines = split(output, '\n');
-    ASSERT_EQ(lines.size(), 14);
+    ASSERT_EQ(lines.size(), 15);
     ASSERT_EQ(lines[0], "");
     ASSERT_EQ(lines[1], "Program options:");
     ASSERT_NE(lines[2].find("-h [ --help ]"), std::string::npos);
@@ -107,8 +108,11 @@ TEST_F(config_test, help)
     ASSERT_NE(lines[10].find("--style.task_list_width arg"),
               std::string::npos);
     ASSERT_NE(lines[11].find("--keybindings.quit arg"), std::string::npos);
-    ASSERT_NE(lines[12].find("--keybindings.new_list arg"), std::string::npos);
-    ASSERT_EQ(lines[13], "");
+    ASSERT_NE(lines[12].find("--keybindings.project.new_list arg"),
+              std::string::npos);
+    ASSERT_NE(lines[13].find("add a new list to the project board"),
+              std::string::npos);
+    ASSERT_EQ(lines[14], "");
 }
 
 TEST_F(config_test, config_add_option)

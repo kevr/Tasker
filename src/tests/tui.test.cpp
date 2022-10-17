@@ -170,7 +170,10 @@ TEST_F(mock_tui_test, w_add_str)
     ASSERT_EQ(term.return_code(), OK);
 
     // TODO: Fix this keybind control. Should it be 'L'?
-    EXPECT_EQ(output, "Press 'n' to add a list...");
+    auto &conf = cfg::config::ref();
+    auto key = conf.get<char>("keybindings.project.new_list");
+    auto str = fmt::format("Press '{0}' to add a list...", key);
+    EXPECT_EQ(output, str);
 }
 
 TEST_F(mock_tui_test, waddstr_fails)

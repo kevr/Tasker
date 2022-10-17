@@ -22,6 +22,9 @@ protected: // Convenient type aliases
 
     using task_list_t = tui::task_list<ext::ncurses>;
 
+    char new_key;
+    char quit_key;
+
 protected: // Member variables
     ext::mock_ncurses ncurses;
 
@@ -33,7 +36,10 @@ public: // Member functions
     void SetUp()
     {
         MAKE_ARGS();
-        cfg::config::ref().parse_args(argc, argv);
+        auto &conf = cfg::config::ref();
+        conf.parse_args(argc, argv);
+        new_key = conf.get<char>("keybindings.project.new_list");
+        quit_key = conf.get<char>("keybindings.quit");
 
         root = std::make_shared<root_window_t>(ncurses);
         board = std::make_shared<board_t>(ncurses, root);
@@ -80,10 +86,10 @@ TEST_F(board_test, adds_list_via_keybind)
     // Global keybindings must be bound before we start processing input
     root->context.bind_keys(cfg::config::ref());
 
-    // Mock getchar() to return 'n', then 'q'
+    // Mock getchar() to spawn a new list, then quit
     EXPECT_CALL(ncurses, getchar())
-        .WillOnce(Return('n'))
-        .WillOnce(Return('q'));
+        .WillOnce(Return(new_key))
+        .WillOnce(Return(quit_key));
 
     // Run the input loop
     tasker::input_loop(ncurses, root->context);
@@ -105,17 +111,22 @@ TEST_F(board_test, navigate_board_via_keybinds)
     // Global keybindings must be bound before we start processing input
     root->context.bind_keys(cfg::config::ref());
 
-    // Mock getchar() to return 'n' twice, spawning two lists,
-    // then following it up with a KEY_RIGHT and KEY_LEFT, exercising
-    // navigation.
+    // Mock getchar() to:
+    // 1. Spawn a list
+    // 2. Try to navigate left
+    // 3. Try to navigate right
+    // 4. Spawn another list
+    // 5. Navigate right
+    // 6. Navigate left
+    // 7. Quit
     EXPECT_CALL(ncurses, getchar())
-        .WillOnce(Return('n'))
+        .WillOnce(Return(new_key))
         .WillOnce(Return(KEY_LEFT))
         .WillOnce(Return(KEY_RIGHT))
-        .WillOnce(Return('n'))
+        .WillOnce(Return(new_key))
         .WillOnce(Return(KEY_RIGHT))
         .WillOnce(Return(KEY_LEFT))
-        .WillOnce(Return('q'));
+        .WillOnce(Return(quit_key));
 
     // Run the input loop
     tasker::input_loop(ncurses, root->context);
@@ -140,9 +151,11 @@ TEST_F(board_test, new_list_error)
     EXPECT_CALL(ncurses, derwin(_, _, _, _, _))
         .Times(1)
         .WillOnce(Return(nullptr));
+
+    // Mock getchar() to spawn a new list, then quit
     EXPECT_CALL(ncurses, getchar())
-        .WillOnce(Return('n'))
-        .WillOnce(Return('q'));
+        .WillOnce(Return(new_key))
+        .WillOnce(Return(quit_key));
 
     // Run the input loop
     tasker::input_loop(ncurses, root->context);

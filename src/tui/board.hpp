@@ -111,7 +111,9 @@ public:
         };
 
         // TODO: Make this keybind tunable
-        root->context.keybinds['n'] = [this]() -> int {
+        auto &conf = cfg::config::ref();
+        auto key = conf.get<char>("keybindings.project.new_list");
+        root->context.keybinds[key] = [this]() -> int {
             using task_list_t = task_list<CI>;
             logging.debug("added list");
             auto list = std::make_shared<task_list_t>(
@@ -137,11 +139,10 @@ public:
         this->erase();
 
         auto &conf = cfg::config::ref();
-        auto new_list_key = conf.get<char>("keybindings.new_list");
+        auto key = conf.get<char>("keybindings.project.new_list");
         if (m_lists.empty()) {
 
-            auto str =
-                fmt::format("Press '{0}' to add a list...", new_list_key);
+            auto str = fmt::format("Press '{0}' to add a list...", key);
             if (auto rc =
                     this->ncurses->w_add_str(this->handle(), str.c_str())) {
                 auto str = fmt::format("w_add_str() failed: {0}", rc);
