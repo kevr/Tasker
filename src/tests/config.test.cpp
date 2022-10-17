@@ -50,6 +50,19 @@ std::string capture_ostream(const T &t)
     return ss.str();
 }
 
+TEST(config, parse_args)
+{
+    MAKE_ARGS();
+    char **av = const_cast<char **>(argv);
+    cfg::config::ref().parse_args(argc, av);
+}
+
+TEST(config, parse_args_const)
+{
+    MAKE_ARGS();
+    cfg::config::ref().parse_args(argc, argv);
+}
+
 TEST(config, set_ref)
 {
     // Set the reference to itself
