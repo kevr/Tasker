@@ -130,3 +130,10 @@ root_window_test = executable(
   dependencies : mock_deps,
 )
 test('root_window test', root_window_test)
+
+basic_window_test = executable(
+  'basic_window.test',
+  'basic_window.test.cpp',
+  dependencies : mock_deps,
+)
+test('basic_window test', basic_window_test)

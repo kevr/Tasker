@@ -7,8 +7,13 @@ using ::testing::_;
 using ::testing::Invoke;
 using ::testing::Return;
 
-using root_window_t = tui::root_window<ext::ncurses>;
+using CI = ext::ncurses;
+
+using root_window_t = tui::root_window<CI>;
 using root_window_ptr = std::shared_ptr<root_window_t>;
+
+using window_t = tui::window<CI>;
+using window_ptr = std::shared_ptr<window_t>;
 
 // Test fixture using stubbed ncurses.
 class window_test : public ::testing::Test
@@ -49,8 +54,7 @@ TEST(root_window, ncurses_null)
     root_window_ptr root = std::make_shared<root_window_t>();
     ASSERT_EQ(root->init(), ERR);
     ASSERT_EQ(root->refresh(), ERR);
-    ASSERT_EQ(root->end(), OK);
-    // assert_window_actions(root, ERR, ERR, ERR);
+    ASSERT_EQ(root->end(), ERR);
 }
 
 TEST(root_window, stub_nulls_root)
@@ -189,4 +193,15 @@ TEST_F(mock_window_test, refresh_all)
 
     // End the child windows.
     EXPECT_CALL(ncurses, delwin(_)).WillRepeatedly(Return(OK));
+}
+
+TEST_F(window_test, add_child_exc)
+{
+    // We can add a child, but we can't add the same child more than
+    // once. Doing so throws an std::logic_error.
+    ASSERT_EQ(root->init(), OK);
+
+    auto window = std::make_shared<window_t>(ncurses, root);
+    EXPECT_NO_THROW(root->add_child(window));
+    EXPECT_THROW(root->add_child(window), std::logic_error);
 }

@@ -95,7 +95,9 @@ public:
 
     virtual int end() noexcept final override
     {
-        basic_window<CI>::end();
+        if (auto rc = basic_window<CI>::end()) {
+            return rc;
+        }
 
         if (this->m_win) {
             if (auto rc = this->ncurses->endwin()) {
