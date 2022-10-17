@@ -18,10 +18,17 @@
 # When set to any value, it will be considered true (enabled).
 #debug = on
 
-## Keybindings
-# The `key_quit` option controls which keypress is bound
-# to quitting the program.
-#key_quit = q
+# Global keybindings
+[keybindings]
+quit = q
+
+# Project keybindings
+[keybindings.project]
+new_list = L
+
+# Task list geometry
+[style.task_list]
+width = 20
 
 ## Colorscheme
 # The `color` section contains config options for every color

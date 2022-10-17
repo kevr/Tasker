@@ -51,7 +51,7 @@ public:
     int add_list(task_list_ptr list)
     {
         auto &conf = cfg::config::ref();
-        auto task_list_width = conf.get<int>("style.task_list_width");
+        auto task_list_width = conf.get<int>("style.task_list.width");
 
         auto [x, y] = this->dimensions();
         auto width = std::min(task_list_width, x);

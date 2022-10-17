@@ -24,14 +24,8 @@ static std::ofstream ofs;
 
 int tasker_main(ext::ncurses &ncurses, int argc, const char *argv[])
 {
-    namespace po = boost::program_options;
-
     // Parse command line arguments and handle them.
     auto &conf = cfg::config::ref();
-    conf.option("debug,d", "enable debug logging");
-    conf.option("logfile,l",
-                po::value<std::string>(),
-                "designate a log file instead of stderr");
 
     try {
         conf.parse_args(argc, argv);
@@ -79,6 +73,11 @@ int tasker_main(ext::ncurses &ncurses, int argc, const char *argv[])
     } catch (boost::program_options::validation_error &e) {
         auto str = fmt::format("error: {0}\n", e.what());
         return raw_error(ERROR_VALIDATE, str);
+    }
+
+    if (conf.exists("show-config")) {
+        conf.show(std::cout);
+        return 0;
     }
 
     if (conf.exists("debug")) {

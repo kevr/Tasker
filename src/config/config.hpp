@@ -55,7 +55,16 @@ public:
     config() noexcept;
     virtual ~config() = default;
 
+    config &cmdline_option(const std::string &key, const std::string &help);
     config &option(const std::string &key, const std::string &help);
+
+    template <typename T>
+    config &cmdline_option(const std::string &key, T &&arg,
+                           const std::string &help)
+    {
+        m_desc.add_options()(key.c_str(), std::move(arg), help.c_str());
+        return *this;
+    }
 
     template <typename T>
     config &option(const std::string &key, T &&arg, const std::string &help)
@@ -91,6 +100,8 @@ public:
     }
 
     std::string operator[](const std::string &key) const;
+
+    std::ostream &show(std::ostream &os);
 
     //! Reset configuration options and parsed variables
     void reset();

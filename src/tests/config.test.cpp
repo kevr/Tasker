@@ -73,7 +73,7 @@ TEST_F(config_test, usage)
 {
     std::string expected =
         PROG + (" [-hvc] [--color.root_border] [--color.project_bar_bg] "
-                "[--color.project_bar_fg] [--style.task_list_width] "
+                "[--color.project_bar_fg] [--style.task_list.width] "
                 "[--keybindings.quit] [--keybindings.project.new_list]");
     ASSERT_EQ(conf.usage(), expected);
 }
@@ -84,7 +84,7 @@ TEST_F(config_test, config_usage)
     std::string expected =
         PROG +
         (" [-hvc] [--color.root_border] [--color.project_bar_bg] "
-         "[--color.project_bar_fg] [--style.task_list_width] "
+         "[--color.project_bar_fg] [--style.task_list.width] "
          "[--keybindings.quit] [--keybindings.project.new_list] [--test]");
     ASSERT_EQ(conf.usage(), expected);
 }
@@ -94,25 +94,28 @@ TEST_F(config_test, help)
     auto output = capture_ostream(conf);
 
     auto lines = split(output, '\n');
-    ASSERT_EQ(lines.size(), 15);
+    ASSERT_EQ(lines.size(), 18);
     ASSERT_EQ(lines[0], "");
     ASSERT_EQ(lines[1], "Program options:");
     ASSERT_NE(lines[2].find("-h [ --help ]"), std::string::npos);
     ASSERT_NE(lines[3].find("-v [ --version ]"), std::string::npos);
-    ASSERT_NE(lines[4].find("-c [ --config ] arg"), std::string::npos);
-    ASSERT_EQ(lines[5], "");
-    ASSERT_EQ(lines[6], "Config options:");
-    ASSERT_NE(lines[7].find("--color.root_border arg"), std::string::npos);
-    ASSERT_NE(lines[8].find("--color.project_bar_bg arg"), std::string::npos);
-    ASSERT_NE(lines[9].find("--color.project_bar_fg arg"), std::string::npos);
-    ASSERT_NE(lines[10].find("--style.task_list_width arg"),
+    ASSERT_NE(lines[4].find("-d [ --debug ]"), std::string::npos);
+    ASSERT_NE(lines[5].find("-l [ --logfile ] arg"), std::string::npos);
+    ASSERT_NE(lines[6].find("-c [ --config ] arg"), std::string::npos);
+    ASSERT_NE(lines[7].find("--show-config"), std::string::npos);
+    ASSERT_EQ(lines[8], "");
+    ASSERT_EQ(lines[9], "Config options:");
+    ASSERT_NE(lines[10].find("--color.root_border arg"), std::string::npos);
+    ASSERT_NE(lines[11].find("--color.project_bar_bg arg"), std::string::npos);
+    ASSERT_NE(lines[12].find("--color.project_bar_fg arg"), std::string::npos);
+    ASSERT_NE(lines[13].find("--style.task_list.width arg"),
               std::string::npos);
-    ASSERT_NE(lines[11].find("--keybindings.quit arg"), std::string::npos);
-    ASSERT_NE(lines[12].find("--keybindings.project.new_list arg"),
+    ASSERT_NE(lines[14].find("--keybindings.quit arg"), std::string::npos);
+    ASSERT_NE(lines[15].find("--keybindings.project.new_list arg"),
               std::string::npos);
-    ASSERT_NE(lines[13].find("add a new list to the project board"),
+    ASSERT_NE(lines[16].find("add a new list to the project board"),
               std::string::npos);
-    ASSERT_EQ(lines[14], "");
+    ASSERT_EQ(lines[17], "");
 }
 
 TEST_F(config_test, config_add_option)

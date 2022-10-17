@@ -1,3 +1,4 @@
+#include "defaults.hpp"
 #include <gtest/internal/gtest-port.h>
 #define main main_real
 #include "main.cpp"
@@ -15,13 +16,13 @@ class main_test : public ::testing::Test
 {
 protected:
     std::filesystem::path tmpdir;
+    std::filesystem::path conf_path;
 
 protected:
-    void write_config(const std::map<std::string, std::string> &options)
+    void write_config(const std::map<std::string, std::string> &options = {})
     {
-        std::filesystem::path p = tmpdir / "config";
         {
-            std::ofstream ofs(p.c_str(), std::ios::out);
+            std::ofstream ofs(conf_path.c_str(), std::ios::out);
             for (auto &kv : options) {
                 ofs << kv.first << " = " << kv.second << std::endl;
             }
@@ -35,6 +36,7 @@ public:
     {
         cfg::config::new_ref();
         tmpdir = test::make_temp_directory();
+        conf_path = tmpdir / "config";
     }
 
     void TearDown() override
@@ -153,8 +155,11 @@ TEST_F(main_test, help)
     ASSERT_EQ(lines[2], "Program options:");
     ASSERT_NE(lines[3].find("-h [ --help ]"), std::string::npos);
     ASSERT_NE(lines[4].find("-v [ --version ]"), std::string::npos);
-    ASSERT_NE(lines[5].find("-c [ --config ] arg"), std::string::npos);
-    ASSERT_EQ(lines[6], "");
+    ASSERT_NE(lines[5].find("-d [ --debug ]"), std::string::npos);
+    ASSERT_NE(lines[6].find("-l [ --logfile ] arg"), std::string::npos);
+    ASSERT_NE(lines[7].find("-c [ --config ] arg"), std::string::npos);
+    ASSERT_NE(lines[8].find("--show-config"), std::string::npos);
+    ASSERT_EQ(lines[9], "");
 }
 
 TEST_F(main_test, version)
@@ -171,13 +176,9 @@ TEST_F(main_test, version)
 
 TEST_F(main_test, custom_config)
 {
-    std::map<std::string, std::string> options;
-    write_config(options);
+    write_config();
 
-    std::filesystem::path path(tmpdir);
-    path /= "config";
-
-    MAKE_ARGS("--config", path.c_str());
+    MAKE_ARGS("--config", conf_path.c_str());
     auto rc = main_real(argc, argv);
     ASSERT_EQ(rc, OK);
 }
@@ -275,6 +276,61 @@ TEST_F(main_test, error_validate)
 {
     ext::ncurses ncurses;
 
-    MAKE_ARGS("--style.task_list_width", "-1");
+    MAKE_ARGS("--style.task_list.width", "-1");
     ASSERT_EQ(tasker_main(ncurses, argc, argv), ERROR_VALIDATE);
+}
+
+TEST_F(main_test, show_config)
+{
+    testing::internal::CaptureStdout();
+
+    ext::ncurses ncurses;
+    write_config();
+
+    MAKE_ARGS("--config", conf_path.c_str(), "--show-config");
+    ASSERT_EQ(tasker_main(ncurses, argc, argv), OK);
+
+    auto output = testing::internal::GetCapturedStdout();
+    auto lines = split(output, '\n');
+
+    auto str = fmt::format("config: \"{0}\"", conf_path.c_str());
+    ASSERT_EQ(lines[0], str);
+
+    ASSERT_EQ(lines[1], "debug: false");
+    ASSERT_EQ(lines[2], "logfile: stdout");
+    ASSERT_EQ(lines[3], "color.root_border: 4");
+    ASSERT_EQ(lines[4], "color.project_bar_bg: 4");
+    ASSERT_EQ(lines[5], "color.project_bar_fg: 0");
+
+    str = fmt::format("style.task_list.width: {0}",
+                      static_cast<int>(defaults::TASK_LIST_WIDTH));
+    ASSERT_EQ(lines[6], str);
+
+    str = fmt::format("keybindings.quit: '{0}'",
+                      static_cast<char>(defaults::KEY_QUIT));
+    ASSERT_EQ(lines[7], str);
+
+    str = fmt::format("keybindings.project.new_list: '{0}'",
+                      static_cast<char>(defaults::KEY_NEW_LIST));
+    ASSERT_EQ(lines[8], str);
+}
+
+TEST_F(main_test, show_config_custom_logfile)
+{
+    testing::internal::CaptureStdout();
+
+    ext::ncurses ncurses;
+    write_config();
+
+    MAKE_ARGS("--config",
+              conf_path.c_str(),
+              "--logfile",
+              "test.log",
+              "--show-config");
+    ASSERT_EQ(tasker_main(ncurses, argc, argv), OK);
+
+    auto output = testing::internal::GetCapturedStdout();
+    auto lines = split(output, '\n');
+
+    ASSERT_EQ(lines[2], "logfile: \"test.log\"");
 }

@@ -93,7 +93,7 @@ public:
     virtual int init() noexcept override
     {
         auto &conf = cfg::config::ref();
-        auto task_list_width = conf.get<int>("style.task_list_width");
+        auto task_list_width = conf.get<int>("style.task_list.width");
 
         auto [x, y] = this->m_parent->dimensions();
         auto width = std::min(task_list_width, x);

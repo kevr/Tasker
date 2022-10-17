@@ -1,6 +1,7 @@
 #include "config.hpp"
 #include "../config.hpp"
 #include "defaults.hpp"
+#include "env.hpp"
 #include <algorithm>
 #include <boost/program_options/errors.hpp>
 #include <fmt/format.h>
@@ -13,11 +14,27 @@ cfg::config *cfg::config::m_conf = &conf;
 
 cfg::config::config() noexcept
 {
-    m_desc.add_options()("help,h", "produce help message");
-    m_desc.add_options()("version,v", "print version string");
-    m_desc.add_options()(
+    cmdline_option("help,h", "produce help message");
+    cmdline_option("version,v", "print version string");
+    cmdline_option("debug,d", "enable debug logging");
+    option("debug,d", "enable debug logging");
+    cmdline_option("logfile,l",
+                   po::value<std::string>(),
+                   "designate a log file instead of stdout");
+    option("logfile,l",
+           po::value<std::string>(),
+           "designate a log file instead of stdout");
+    cmdline_option(
         "config,c", po::value<std::string>(), "custom config file path");
+    cmdline_option("show-config", "display the parsed configuration");
     reset();
+}
+
+cfg::config &cfg::config::cmdline_option(const std::string &key,
+                                         const std::string &help)
+{
+    m_desc.add_options()(key.c_str(), help.c_str());
+    return *this;
 }
 
 cfg::config &cfg::config::option(const std::string &key,
@@ -61,9 +78,9 @@ cfg::config &cfg::config::parse_config(const std::filesystem::path &path)
 
 cfg::config &cfg::config::check_args()
 {
-    if (auto x = get<int>("style.task_list_width"); x <= 0) {
+    if (auto x = get<int>("style.task_list.width"); x <= 0) {
         auto exc = po::invalid_option_value(std::to_string(x));
-        exc.set_option_name("style.task_list_width");
+        exc.set_option_name("style.task_list.width");
         throw exc;
     }
 
@@ -80,6 +97,36 @@ std::string cfg::config::operator[](const std::string &key) const
     return get<std::string>(key);
 }
 
+std::ostream &cfg::config::show(std::ostream &os)
+{
+    auto conf_path = env::search_config_path();
+    if (exists("config")) {
+        conf_path = get<std::string>("config");
+    }
+
+    std::string logfile("stdout");
+    if (exists("logfile")) {
+        logfile = "\"" + get<std::string>("logfile") + "\"";
+    }
+
+    os << "config: " << conf_path.value() << std::endl
+       << "debug: " << (exists("debug") ? "true" : "false") << std::endl
+       << "logfile: " << logfile << std::endl
+       << "color.root_border: " << get<short>("color.root_border") << std::endl
+       << "color.project_bar_bg: " << get<short>("color.project_bar_bg")
+       << std::endl
+       << "color.project_bar_fg: " << get<short>("color.project_bar_fg")
+       << std::endl
+       << "style.task_list.width: " << get<int>("style.task_list.width")
+       << std::endl
+       << "keybindings.quit: '" << get<char>("keybindings.quit") << "'"
+       << std::endl
+       << "keybindings.project.new_list: '"
+       << get<char>("keybindings.project.new_list") << "'" << std::endl;
+
+    return os;
+}
+
 void cfg::config::reset()
 {
     m_vars.clear();
@@ -93,7 +140,7 @@ void cfg::config::reset()
     m_config->add_options()("color.project_bar_fg",
                             po::value<short>()->default_value(0),
                             "8/256 color ordinal");
-    m_config->add_options()("style.task_list_width",
+    m_config->add_options()("style.task_list.width",
                             po::value<int>()->default_value(20),
                             "task list width");
 
