@@ -116,3 +116,10 @@ context_test = executable(
   dependencies : mock_deps,
 )
 test('context test', context_test)
+
+task_list_test = executable(
+  'task_list.test',
+  'task_list.test.cpp',
+  dependencies : mock_deps,
+)
+test('task_list test', task_list_test)

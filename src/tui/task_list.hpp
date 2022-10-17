@@ -14,63 +14,53 @@ namespace tasker::tui
 {
 
 /**
- * @brief Task information typically used as a list item
- **/
-template <typename CI>
-class task_info : public window<CI>
-{
-private:
-    task m_task;
-
-public:
-    using window<CI>::window;
-};
-
-/**
  * @brief Vertical list of task_info objects
  **/
 template <typename CI>
 class task_list : public window<CI>
 {
 private:
-    // Internal type aliases
-
-    // title_bar<CI>
     using title_bar_t = title_bar<CI>;
     using title_bar_ptr = std::shared_ptr<title_bar_t>;
 
-    // pane<CI>
     using pane_t = pane<CI>;
     using pane_ptr = std::shared_ptr<pane_t>;
 
-    // task_info<CI>
-    using task_info_t = task_info<CI>;
-    using task_info_ptr = std::shared_ptr<task_info_t>;
-
 private:
-    // List name
-    std::optional<std::string> m_name;
-
     // List title window (populated with m_name)
     title_bar_ptr m_title;
 
     // List pane (where the tasks go)
     pane_ptr m_pane;
 
-    // A container of task information
-    std::vector<task_info_ptr> m_tasks;
-
+    // Focus flag
     bool m_focus = false;
 
     // Logging object
     logger logging;
 
+private:
+    void enforce_title() const
+    {
+        if (!m_title) {
+            throw std::logic_error(
+                "set_name(std::string) called on an uninitialized list");
+        }
+    }
+
 public:
     using window<CI>::window;
 
+    const std::string &name() const
+    {
+        enforce_title();
+        return m_title->name;
+    }
+
     task_list &set_name(const std::string &name)
     {
-        m_name = name;
+        enforce_title();
+        m_title->name = name;
         return *this;
     }
 
@@ -115,9 +105,6 @@ public:
 
         m_title = std::make_shared<title_bar_t>(*this->ncurses,
                                                 this->shared_from_this());
-        if (m_name.has_value()) {
-            m_title->name = m_name.value();
-        }
         m_title->set_dimensions(width, 1);
         if (auto rc = m_title->init()) {
             return rc;
@@ -144,17 +131,6 @@ public:
         }
 
         return OK;
-    }
-
-    void add_task(task_info_ptr ti)
-    {
-        auto [x, y] = this->m_parent->dimensions();
-        ti->set_dimensions(x, 5); // task_list width, 5 height
-
-        auto n = m_tasks.size();
-        ti->offset(0, n * 5);
-
-        m_tasks.emplace_back(std::move(ti));
     }
 };
 
