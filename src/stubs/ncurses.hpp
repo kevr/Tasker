@@ -70,7 +70,6 @@ public:
     virtual int wborder(WINDOW *, chtype, chtype, chtype, chtype, chtype,
                         chtype, chtype, chtype) noexcept;
     virtual int werase(WINDOW *) noexcept;
-    virtual int wresize(WINDOW *, int, int) noexcept;
     virtual int wmove(WINDOW *, int, int) noexcept;
     virtual int curs_set(int) noexcept;
 

@@ -105,11 +105,6 @@ int ext::ncurses::werase(WINDOW *win) noexcept
     return OK;
 }
 
-int ext::ncurses::wresize(WINDOW *, int, int) noexcept
-{
-    return OK;
-}
-
 int ext::ncurses::wmove(WINDOW *, int, int) noexcept
 {
     return OK;

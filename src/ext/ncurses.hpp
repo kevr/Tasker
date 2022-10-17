@@ -32,7 +32,6 @@ public:
     int wborder(WINDOW *, chtype, chtype, chtype, chtype, chtype, chtype,
                 chtype, chtype) noexcept;
     int werase(WINDOW *) noexcept;
-    int wresize(WINDOW *, int, int) noexcept;
     int wmove(WINDOW *, int, int) noexcept;
     int curs_set(int) noexcept;
 
