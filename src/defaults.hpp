@@ -10,7 +10,7 @@ enum size : int {
 
 enum keybinds : int {
     KEY_QUIT = 'q',
-    KEY_NEW_LIST = 'n',
+    KEY_NEW_LIST = 'L',
 };
 
 };     // namespace tasker::defaults
