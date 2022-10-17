@@ -83,6 +83,35 @@ TEST_F(tui_test, runs)
     ASSERT_EQ(term.init().end(), OK);
 }
 
+TEST(tui, end_fails)
+{
+    ext::mock_ncurses ncurses;
+    tui_t term(ncurses);
+
+    WINDOW fake_win;
+    EXPECT_CALL(ncurses, initscr()).WillOnce(Return(&fake_win));
+    EXPECT_CALL(ncurses, keypad(_, _)).WillOnce(Return(OK));
+    EXPECT_CALL(ncurses, raw()).WillOnce(Return(OK));
+    EXPECT_CALL(ncurses, noecho()).WillOnce(Return(OK));
+    EXPECT_CALL(ncurses, curs_set(_)).WillOnce(Return(OK));
+    EXPECT_CALL(ncurses, get_max_yx(_, _, _))
+        .WillOnce(Invoke([](WINDOW *, int &y, int &x) {
+            x = 800;
+            y = 600;
+        }));
+
+    EXPECT_CALL(ncurses, derwin(_, _, _, _, _))
+        .WillRepeatedly(Return(&fake_win));
+    EXPECT_CALL(ncurses, w_add_str(_, _)).WillRepeatedly(Return(OK));
+    EXPECT_CALL(ncurses, wborder(_, _, _, _, _, _, _, _, _))
+        .WillRepeatedly(Return(OK));
+
+    EXPECT_CALL(ncurses, delwin(_)).WillOnce(Return(ERR));
+
+    ASSERT_EQ(term.init().return_code(), OK);
+    ASSERT_EQ(term.end(), ERR);
+}
+
 TEST(tui, curs_set_error)
 {
     WINDOW fake_win;
@@ -92,6 +121,12 @@ TEST(tui, curs_set_error)
     EXPECT_CALL(ncurses, raw()).WillOnce(Return(OK));
     EXPECT_CALL(ncurses, noecho()).WillOnce(Return(OK));
     EXPECT_CALL(ncurses, curs_set(_)).WillOnce(Return(ERR));
+    EXPECT_CALL(ncurses, get_max_yx(_, _, _))
+        .WillOnce(Invoke([](WINDOW *, int &y, int &x) {
+            x = 800;
+            y = 600;
+        }));
+    EXPECT_CALL(ncurses, endwin()).WillOnce(Return(OK));
 
     tui_t term(ncurses);
     ASSERT_EQ(term.init().return_code(), ERROR_CURS_SET);
