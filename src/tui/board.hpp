@@ -67,7 +67,7 @@ public:
 
         if (!list->initialized()) {
             if (auto rc = list->init()) {
-                return error(rc, "add_list list::init failed");
+                return error(rc, LOG("task_list::init() failed"));
             }
         }
 
@@ -96,20 +96,6 @@ public:
     {
         if (auto rc = window<CI>::init()) {
             return rc;
-        }
-
-        size_t i = 0;
-        for (auto &list : m_lists) {
-            if (!list->initialized()) {
-                // Initialize lists that have not yet been initialized
-                if (auto rc = list->init()) {
-                    return rc;
-                }
-            } else {
-                auto str = fmt::format("list {0} already initialized", i);
-                logging.debug(LOG(str));
-            }
-            ++i;
         }
 
         auto root = reinterpret_cast<root_window<CI> *>(this->m_root.get());
