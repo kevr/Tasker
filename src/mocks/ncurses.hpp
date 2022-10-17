@@ -14,6 +14,7 @@ public:
     MOCK_METHOD(int, keypad, (WINDOW *, bool), (noexcept, override));
     MOCK_METHOD(int, raw, (), (noexcept, override));
     MOCK_METHOD(int, noecho, (), (noexcept, override));
+    MOCK_METHOD(int, curs_set, (int), (noexcept, override));
     MOCK_METHOD(int, getchar, (), (noexcept, override));
     MOCK_METHOD(int, wrefresh, (WINDOW *), (noexcept, override));
     MOCK_METHOD(int, refresh, (), (noexcept, override));

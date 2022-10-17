@@ -9,6 +9,9 @@ using ::testing::_;
 using ::testing::Invoke;
 using ::testing::Return;
 
+using CI = ext::ncurses;
+using tui_t = tui::tui<CI>;
+
 template <typename CI>
 void expect_root(CI &ncurses, WINDOW *win)
 {
@@ -16,6 +19,7 @@ void expect_root(CI &ncurses, WINDOW *win)
     EXPECT_CALL(ncurses, keypad(_, _)).WillOnce(Return(OK));
     EXPECT_CALL(ncurses, raw()).WillOnce(Return(OK));
     EXPECT_CALL(ncurses, noecho()).WillOnce(Return(OK));
+    EXPECT_CALL(ncurses, curs_set(_)).WillOnce(Return(OK));
     EXPECT_CALL(ncurses, endwin()).WillOnce(Return(OK));
     EXPECT_CALL(ncurses, get_max_yx(_, _, _))
         .WillOnce(Invoke([](WINDOW *, int &y, int &x) {
@@ -43,8 +47,8 @@ void setup_config()
 class tui_test : public ::testing::Test
 {
 protected:
-    ext::ncurses ncurses;
-    tui::tui<ext::ncurses> term { ncurses };
+    CI ncurses;
+    tui_t term { ncurses };
 
 public:
     static void SetUpTestSuite()
@@ -56,11 +60,10 @@ public:
 class mock_tui_test : public ::testing::Test
 {
 protected:
-    WINDOW mock_win;
-    WINDOW mock_pane;
-
     ext::mock_ncurses ncurses;
-    tui::tui<ext::ncurses> term { ncurses };
+
+    WINDOW mock_win;
+    tui_t term { ncurses };
 
 public:
     static void SetUpTestSuite()
@@ -68,16 +71,30 @@ public:
         setup_config();
     }
 
-    virtual void SetUp() override
+    void SetUp()
     {
         expect_root(ncurses, &mock_win);
-        expect_pane(ncurses, &mock_pane);
+        expect_pane(ncurses, &mock_win);
     }
 };
 
 TEST_F(tui_test, runs)
 {
     ASSERT_EQ(term.init().end(), OK);
+}
+
+TEST(tui, curs_set_error)
+{
+    WINDOW fake_win;
+    ext::mock_ncurses ncurses;
+    EXPECT_CALL(ncurses, initscr()).WillOnce(Return(&fake_win));
+    EXPECT_CALL(ncurses, keypad(_, _)).WillOnce(Return(OK));
+    EXPECT_CALL(ncurses, raw()).WillOnce(Return(OK));
+    EXPECT_CALL(ncurses, noecho()).WillOnce(Return(OK));
+    EXPECT_CALL(ncurses, curs_set(_)).WillOnce(Return(ERR));
+
+    tui_t term(ncurses);
+    ASSERT_EQ(term.init().return_code(), ERROR_CURS_SET);
 }
 
 TEST_F(mock_tui_test, init_twice_noop)
@@ -131,7 +148,7 @@ TEST_F(mock_tui_test, waddstr_fails)
 TEST_F(mock_tui_test, project_init_fails)
 {
     EXPECT_CALL(ncurses, derwin(_, _, _, _, _))
-        .WillOnce(Return(&mock_pane))
+        .WillOnce(Return(&mock_win))
         .WillOnce(Return(nullptr));
     term.init();
     ASSERT_EQ(term.return_code(), ERROR_DERWIN);
@@ -140,8 +157,8 @@ TEST_F(mock_tui_test, project_init_fails)
 TEST_F(mock_tui_test, bar_init_fails)
 {
     EXPECT_CALL(ncurses, derwin(_, _, _, _, _))
-        .WillOnce(Return(&mock_pane))
-        .WillOnce(Return(&mock_pane))
+        .WillOnce(Return(&mock_win))
+        .WillOnce(Return(&mock_win))
         .WillOnce(Return(nullptr));
     term.init();
     ASSERT_EQ(term.return_code(), ERROR_DERWIN);
@@ -150,9 +167,9 @@ TEST_F(mock_tui_test, bar_init_fails)
 TEST_F(mock_tui_test, content_init_fails)
 {
     EXPECT_CALL(ncurses, derwin(_, _, _, _, _))
-        .WillOnce(Return(&mock_pane))
-        .WillOnce(Return(&mock_pane))
-        .WillOnce(Return(&mock_pane))
+        .WillOnce(Return(&mock_win))
+        .WillOnce(Return(&mock_win))
+        .WillOnce(Return(&mock_win))
         .WillOnce(Return(nullptr));
     term.init();
     ASSERT_EQ(term.return_code(), ERROR_DERWIN);

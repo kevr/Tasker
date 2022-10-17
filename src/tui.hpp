@@ -95,7 +95,7 @@ public:
 
         if (auto rc = ncurses.curs_set(0); rc == ERR) {
             auto str = fmt::format("curs_set(0) failed: {0}", rc);
-            m_return_code = error(ERROR_ECHO, LOG(str));
+            m_return_code = error(ERROR_CURS_SET, LOG(str));
             return *this;
         }
 
