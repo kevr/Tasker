@@ -10,6 +10,12 @@ and linux task formats.
 
 See our MIT [LICENSE](LICENSE) file.
 
+## Development Status
+
+As the sole developer, I am learning ncurses as I work through this
+project. So, getting to a workable release will likely be a rocky
+road. Each rock we climb, we gain a new tool in our arsenal.
+
 ## Building
 
 See [Build dependencies](#build-dependencies) for prerequisite software.
