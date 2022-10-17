@@ -123,3 +123,10 @@ task_list_test = executable(
   dependencies : mock_deps,
 )
 test('task_list test', task_list_test)
+
+root_window_test = executable(
+  'root_window.test',
+  'root_window.test.cpp',
+  dependencies : mock_deps,
+)
+test('root_window test', root_window_test)
