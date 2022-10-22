@@ -152,7 +152,7 @@ TEST_F(main_test, help)
     auto &conf = cfg::config::ref();
     ASSERT_EQ(lines[0], "usage: " + conf.usage());
     ASSERT_EQ(lines[1], "");
-    ASSERT_EQ(lines[2], "Program options:");
+    ASSERT_EQ(lines[2], "Command-line options:");
     ASSERT_NE(lines[3].find("-h [ --help ]"), std::string::npos);
     ASSERT_NE(lines[4].find("-v [ --version ]"), std::string::npos);
     ASSERT_NE(lines[5].find("-d [ --debug ]"), std::string::npos);

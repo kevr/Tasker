@@ -18,11 +18,12 @@ cfg::config::config() noexcept
     cmdline_option("version,v", "print version string");
     cmdline_option("debug,d", "enable debug logging");
     cmdline_option("logfile,l",
-                   po::value<std::string>(),
+                   po::value<std::string>()->composing(),
                    "designate a log file instead of stdout");
     cmdline_option(
         "config,c", po::value<std::string>(), "custom config file path");
     cmdline_option("show-config", "display the parsed configuration");
+
     reset();
 }
 
@@ -68,7 +69,9 @@ cfg::config &cfg::config::parse_args(int argc, const char *argv[])
 
 cfg::config &cfg::config::parse_config(const std::filesystem::path &path)
 {
-    po::store(po::parse_config_file(path.c_str(), *m_config), m_vars);
+    po::options_description config;
+    config.add(m_desc).add(*m_config);
+    po::store(po::parse_config_file(path.c_str(), config), m_vars);
     return *this;
 }
 
@@ -146,10 +149,6 @@ void cfg::config::reset()
     option("keybindings.project.new_list",
            po::value<char>()->default_value(defaults::keybinds::KEY_NEW_LIST),
            "add a new list to the project board");
-    option("debug,d", "enable debug logging");
-    option("logfile,l",
-           po::value<std::string>(),
-           "designate a log file instead of stdout");
 }
 
 cfg::config &cfg::config::ref(cfg::config &conf)
