@@ -74,7 +74,8 @@ TEST_F(config_test, usage)
     std::string expected =
         PROG + (" [-hvc] [--color.root_border] [--color.project_bar_bg] "
                 "[--color.project_bar_fg] [--style.task_list.width] "
-                "[--keybindings.quit] [--keybindings.project.new_list]");
+                "[--keybindings.quit] [--keybindings.project.new_list] [-d [ "
+                "--debug ]] [-l [ --logfile ]]");
     ASSERT_EQ(conf.usage(), expected);
 }
 
@@ -82,10 +83,10 @@ TEST_F(config_test, config_usage)
 {
     conf.option("test", "test help");
     std::string expected =
-        PROG +
-        (" [-hvc] [--color.root_border] [--color.project_bar_bg] "
-         "[--color.project_bar_fg] [--style.task_list.width] "
-         "[--keybindings.quit] [--keybindings.project.new_list] [--test]");
+        PROG + (" [-hvc] [--color.root_border] [--color.project_bar_bg] "
+                "[--color.project_bar_fg] [--style.task_list.width] "
+                "[--keybindings.quit] [--keybindings.project.new_list] [-d [ "
+                "--debug ]] [-l [ --logfile ]] [--test]");
     ASSERT_EQ(conf.usage(), expected);
 }
 
@@ -94,9 +95,9 @@ TEST_F(config_test, help)
     auto output = capture_ostream(conf);
 
     auto lines = split(output, '\n');
-    ASSERT_EQ(lines.size(), 18);
+    ASSERT_EQ(lines.size(), 20);
     ASSERT_EQ(lines[0], "");
-    ASSERT_EQ(lines[1], "Program options:");
+    ASSERT_EQ(lines[1], "Command-line options:");
     ASSERT_NE(lines[2].find("-h [ --help ]"), std::string::npos);
     ASSERT_NE(lines[3].find("-v [ --version ]"), std::string::npos);
     ASSERT_NE(lines[4].find("-d [ --debug ]"), std::string::npos);
@@ -115,7 +116,9 @@ TEST_F(config_test, help)
               std::string::npos);
     ASSERT_NE(lines[16].find("add a new list to the project board"),
               std::string::npos);
-    ASSERT_EQ(lines[17], "");
+    ASSERT_NE(lines[17].find("-d [ --debug ]"), std::string::npos);
+    ASSERT_NE(lines[18].find("-l [ --logfile ]"), std::string::npos);
+    ASSERT_EQ(lines[19], "");
 }
 
 TEST_F(config_test, config_add_option)

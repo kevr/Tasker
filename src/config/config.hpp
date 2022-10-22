@@ -37,7 +37,9 @@ private:
     boost::program_options::variables_map m_vars;
 
     //! Command-line program options description.
-    boost::program_options::options_description m_desc { "Program options" };
+    boost::program_options::options_description m_desc {
+        "Command-line options"
+    };
 
     /**
      * @brief Configuration file program options description.

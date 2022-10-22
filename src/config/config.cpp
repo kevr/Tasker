@@ -17,13 +17,9 @@ cfg::config::config() noexcept
     cmdline_option("help,h", "produce help message");
     cmdline_option("version,v", "print version string");
     cmdline_option("debug,d", "enable debug logging");
-    option("debug,d", "enable debug logging");
     cmdline_option("logfile,l",
                    po::value<std::string>(),
                    "designate a log file instead of stdout");
-    option("logfile,l",
-           po::value<std::string>(),
-           "designate a log file instead of stdout");
     cmdline_option(
         "config,c", po::value<std::string>(), "custom config file path");
     cmdline_option("show-config", "display the parsed configuration");
@@ -131,27 +127,29 @@ void cfg::config::reset()
 {
     m_vars.clear();
     m_config = std::make_shared<po::options_description>("Config options");
-    m_config->add_options()("color.root_border",
-                            po::value<short>()->default_value(4),
-                            "8/256 color ordinal");
-    m_config->add_options()("color.project_bar_bg",
-                            po::value<short>()->default_value(4),
-                            "8/256 color ordinal");
-    m_config->add_options()("color.project_bar_fg",
-                            po::value<short>()->default_value(0),
-                            "8/256 color ordinal");
-    m_config->add_options()("style.task_list.width",
-                            po::value<int>()->default_value(20),
-                            "task list width");
 
-    m_config->add_options()(
-        "keybindings.quit",
-        po::value<char>()->default_value(defaults::keybinds::KEY_QUIT),
-        "quit the program");
-    m_config->add_options()(
-        "keybindings.project.new_list",
-        po::value<char>()->default_value(defaults::keybinds::KEY_NEW_LIST),
-        "add a new list to the project board");
+    option("color.root_border",
+           po::value<short>()->default_value(4),
+           "8/256 color ordinal");
+    option("color.project_bar_bg",
+           po::value<short>()->default_value(4),
+           "8/256 color ordinal");
+    option("color.project_bar_fg",
+           po::value<short>()->default_value(0),
+           "8/256 color ordinal");
+    option("style.task_list.width",
+           po::value<int>()->default_value(20),
+           "task list width");
+    option("keybindings.quit",
+           po::value<char>()->default_value(defaults::keybinds::KEY_QUIT),
+           "quit the program");
+    option("keybindings.project.new_list",
+           po::value<char>()->default_value(defaults::keybinds::KEY_NEW_LIST),
+           "add a new list to the project board");
+    option("debug,d", "enable debug logging");
+    option("logfile,l",
+           po::value<std::string>(),
+           "designate a log file instead of stdout");
 }
 
 cfg::config &cfg::config::ref(cfg::config &conf)
