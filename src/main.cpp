@@ -24,6 +24,8 @@ static std::ofstream ofs;
 
 int tasker_main(ext::ncurses &ncurses, int argc, const char *argv[])
 {
+    setlocale(LC_ALL, "");
+
     // Parse command line arguments and handle them.
     auto &conf = cfg::config::ref();
 
